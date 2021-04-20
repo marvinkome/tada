@@ -3,7 +3,6 @@ import {
   Button,
   chakra,
   Container,
-  Divider,
   Flex,
   Heading,
   Image,
@@ -16,17 +15,15 @@ import {
 } from "@chakra-ui/react"
 import { CoinIcon } from "components/coin-icon"
 import { RiSearchLine } from "react-icons/ri"
+import { Header } from "components/header"
 
 const Home: React.FC = () => {
   return (
     <Container my={[4, 14]}>
-      {/* header */}
-      <Heading fontSize="2xl" textAlign="center" fontStyle="italic" textStyle="title">
-        TaDa!
-      </Heading>
+      <Header />
 
       {/*  body */}
-      <chakra.div my={10}>
+      <chakra.main my={10}>
         {/* header */}
         <VStack mb={24} spacing={10}>
           <Heading textAlign="center" variant="title">
@@ -77,7 +74,7 @@ const Home: React.FC = () => {
             ))}
           </VStack>
         </VStack>
-      </chakra.div>
+      </chakra.main>
     </Container>
   )
 }

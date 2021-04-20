@@ -57,15 +57,14 @@ export const theme = extendTheme({
     Button: {
       variants: {
         primary: {
-          ...defaultTheme.components.Button.variants.solid,
           bg: "primary.600",
           borderRadius: "50px",
           boxShadow: "0px 3px 10px rgba(255, 255, 255, 0.25)",
         },
 
         secondary: {
-          ...defaultTheme.components.Button.variants.solid,
-          colorScheme: "primary",
+          bg: "whiteAlpha.900",
+          color: "accent.900",
           borderRadius: "50px",
         },
       },
