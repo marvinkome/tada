@@ -32,3 +32,10 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# Hardhat build outputs
+ethereum/artifacts/
+ethereum/cache/
+
+# Local Netlify folder
+.netlify
