@@ -13,7 +13,7 @@ contract TaDa {
   mapping(string => bool) public hasFaucetUserId;
   mapping(address => bool) public hasFaucetAddress;
 
-  uint256 reserveRatio = 900000; // 90%
+  uint256 reserveRatio = 800000; // 90%
   uint256 scale = 10**18;
 
   ERC20 public token;
