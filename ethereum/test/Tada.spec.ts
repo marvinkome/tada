@@ -1,9 +1,14 @@
 import { expect } from "./setup"
 import { ethers } from "hardhat"
-import { Contract, Signer } from "ethers"
+import { Contract, Signer, BigNumber } from "ethers"
+
+function convertPriceToEth(price: BigNumber) {
+  let ethPrice = price.toString()
+  return ethers.utils.formatEther(ethPrice).toString()
+}
 
 describe("Tada!", () => {
-  const initialSupply = "5000.0"
+  const initialSupply = "5000"
   let account1: Signer
   let account2: Signer
   let account3: Signer
@@ -45,9 +50,8 @@ describe("Tada!", () => {
     })
 
     it("TaDa contract has correct balance", async () => {
-      const tokenBalanceInWei = (await ShillToken.balanceOf(TadaContract.address)).toString()
-      const tokenBalanceToScale = ethers.utils.formatEther(tokenBalanceInWei)
-      expect(initialSupply).to.eq(tokenBalanceToScale)
+      const tokenBalance = (await ShillToken.balanceOf(TadaContract.address)).toString()
+      expect(tokenBalance).to.eq(ethers.utils.parseEther(initialSupply))
     })
   })
 
@@ -86,18 +90,96 @@ describe("Tada!", () => {
     let CreatorToken: Contract
 
     beforeEach(async () => {
-      const address = await TadaContract.makeCreatorToken("Mark Rober", "MKR")
-      CreatorToken = await ethers.getContractAt("CreatorToken", address)
+      await TadaContract.makeCreatorToken("Mark Rober", "MKR")
+      const { creatorToken } = await TadaContract.creators(0)
+      CreatorToken = await ethers.getContractAt("CreatorToken", creatorToken)
     })
 
     it("creates creator token", async () => {
       expect(CreatorToken.address).to.exist
     })
 
-    // it("TaDa contract has correct balance", async () => {
-    //   const tokenBalanceInWei = (await CreatorToken.balanceOf(TadaContract.address)).toString()
-    //   const tokenBalanceToScale = ethers.utils.formatEther(tokenBalanceInWei)
-    //   console.log(tokenBalanceToScale)
-    // })
+    it("TaDa contract has correct balance", async () => {
+      const tokenBalance = (await CreatorToken.balanceOf(TadaContract.address)).toString()
+      expect(tokenBalance).to.eq(ethers.utils.parseEther("1"))
+    })
+
+    it("user can buy creator tokens", async () => {
+      // faucet user account
+      const receiver = account2
+      const receiverAddress = await account2.getAddress()
+      await TadaContract.connect(receiver).faucetToken(googleId1)
+
+      // buy 10 SHILL worth of creator tokens
+      await ShillToken.connect(receiver).approve(
+        CreatorToken.address,
+        ethers.utils.parseEther("10")
+      )
+      await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"))
+
+      // expect user to buy more than 1 creator tokens with 10 SHILL tokens
+      let balanceOfReceiver = await CreatorToken.balanceOf(receiverAddress)
+      expect(balanceOfReceiver.gte(ethers.utils.parseEther("1"))).to.be.true
+    })
+
+    it("user can sell creator tokens", async () => {
+      // faucet user account
+      const receiver = account2
+      const receiverAddress = await account2.getAddress()
+      await TadaContract.connect(receiver).faucetToken(googleId1)
+
+      // buy 10 SHILL worth of creator tokens
+      await ShillToken.connect(receiver).approve(
+        CreatorToken.address,
+        ethers.utils.parseEther("10")
+      )
+      await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"))
+
+      // sell 1 creator token
+      await CreatorToken.connect(receiver).sell(ethers.utils.parseEther("1"))
+
+      // expect user new balance to be less or equal initial value
+      let balanceOfReceiver = await ShillToken.balanceOf(receiverAddress)
+      expect(balanceOfReceiver.lte(ethers.utils.parseEther("50"))).to.be.true
+    })
+
+    it("creator token price changes when you buy token", async () => {
+      // faucet user account
+      const receiver = account2
+      await TadaContract.connect(receiver).faucetToken(googleId1)
+
+      // price of selling 1 creator token
+      let initSellPrice = await CreatorToken.calculateSellPrice(ethers.utils.parseEther("1"))
+
+      // price of buying 5 creator token
+      let initBuyPrice = await CreatorToken.calculateBuyPrice(ethers.utils.parseEther("5"))
+
+      expect(initSellPrice.gt(initBuyPrice)).to.be.true
+
+      // user buys 10 creator token
+      await ShillToken.connect(receiver).approve(
+        CreatorToken.address,
+        ethers.utils.parseEther("10")
+      )
+      await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"))
+
+      let newSellPrice = await CreatorToken.calculateSellPrice(ethers.utils.parseEther("1"))
+      let newBuyPrice = await CreatorToken.calculateBuyPrice(ethers.utils.parseEther("5"))
+
+      expect(newSellPrice.gt(initSellPrice)).to.be.true
+      expect(newBuyPrice.lt(initBuyPrice)).to.be.true
+
+      // user sells some creator tokens
+      await CreatorToken.connect(receiver).sell(ethers.utils.parseEther("1"))
+
+      let afterNewSellPrice = await CreatorToken.calculateSellPrice(ethers.utils.parseEther("1"))
+      let afterNewBuyPrice = await CreatorToken.calculateBuyPrice(ethers.utils.parseEther("5"))
+
+      expect(afterNewSellPrice.lt(newSellPrice)).to.be.true
+      expect(afterNewBuyPrice.gt(newBuyPrice)).to.be.true
+
+      expect(afterNewSellPrice.gt(initSellPrice)).to.be.true
+      expect(afterNewBuyPrice.lt(initBuyPrice)).to.be.true
+    })
   })
 })

@@ -10,7 +10,7 @@ contract CreatorToken is BancorBondingCurve, ERC20 {
   using SafeMath for uint256;
 
   uint256 scale = 10**18;
-  uint256 reserveBalance = 10 * scale;
+  uint256 reserveBalance = 5 * scale;
   uint256 reserveRatio;
   ERC20 platformToken;
 

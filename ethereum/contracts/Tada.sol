@@ -2,7 +2,6 @@
 pragma solidity ^0.8.3;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
 import "./CreatorToken.sol";
 
 contract TaDa {
@@ -14,7 +13,7 @@ contract TaDa {
   mapping(string => bool) public hasFaucetUserId;
   mapping(address => bool) public hasFaucetAddress;
 
-  uint256 reserveRatio = 15;
+  uint256 reserveRatio = 900000;
   uint256 scale = 10**18;
 
   ERC20 public token;
@@ -42,5 +41,9 @@ contract TaDa {
       });
 
     creators.push(newCreator);
+  }
+
+  function getCreatorTokenCount() public view returns (uint256) {
+    return creators.length;
   }
 }
