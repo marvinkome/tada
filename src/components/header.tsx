@@ -2,13 +2,18 @@ import React from "react"
 import { chakra, Flex, Heading, HStack, Text } from "@chakra-ui/react"
 import { CoinIcon } from "./coin-icon"
 import { IoWalletOutline } from "react-icons/io5"
+import { useBalance } from "burner-wallet/hooks"
 
 export const Header: React.FC = () => {
-  //   return (
-  //     <Heading fontSize="2xl" textAlign="center" fontStyle="italic" textStyle="title">
-  //       TaDa!
-  //     </Heading>
-  //   )
+  const balance = useBalance("shill")
+
+  if (!balance) {
+    return (
+      <Heading fontSize="2xl" textAlign="center" fontStyle="italic" textStyle="title">
+        TaDa!
+      </Heading>
+    )
+  }
 
   return (
     <Flex width="100%" justify="flex-end">

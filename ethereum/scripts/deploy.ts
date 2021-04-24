@@ -2,7 +2,7 @@ import fs from "fs"
 import { ethers, artifacts } from "hardhat"
 
 function saveFrontendFiles(tokenAddress: string, appAddress: string) {
-  const contractsDir = __dirname + "/../../src/web3/contracts"
+  const contractsDir = __dirname + "/../../src/ethereum/contracts"
   if (!fs.existsSync(contractsDir)) fs.mkdirSync(contractsDir)
 
   const TadaArtifact = artifacts.readArtifactSync("TaDa")
@@ -16,7 +16,7 @@ function saveFrontendFiles(tokenAddress: string, appAddress: string) {
 
   const CreatorTokenArtifact = artifacts.readArtifactSync("CreatorToken")
   fs.writeFileSync(
-    contractsDir + "/CreatorTokenArtifact.json",
+    contractsDir + "/CreatorToken.json",
     JSON.stringify(CreatorTokenArtifact.abi, null, 2)
   )
 

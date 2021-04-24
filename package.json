@@ -9,6 +9,7 @@
     "clean:eth": "rimraf ./ethereum/cache && rimraf ./ethereum/artifacts",
     "hrd": "TS_NODE_PROJECT='./ethereum/tsconfig.json' TS_NODE_TRANSPILE_ONLY=1 npx hardhat",
     "compile:eth": "yarn clean:eth && yarn hrd compile",
+    "deploy:local:eth": "yarn hrd run ethereum/scripts/deploy.ts --network localhost",
     "deploy:prod:eth": "yarn hrd run ethereum/scripts/deploy.ts --network kovenOE",
     "test:eth": "yarn hrd test"
   },

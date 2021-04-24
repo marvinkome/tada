@@ -1,8 +1,9 @@
 import Head from "next/head"
 import App from "next/app"
-import type { AppProps, AppContext } from "next/app"
+import type { AppContext } from "next/app"
 import { ChakraProvider } from "@chakra-ui/react"
 import { getAddressFromCookie, WalletProvider } from "burner-wallet"
+import { provider, tokenContracts } from "ethereum"
 import { theme } from "theme"
 
 function MyApp({ Component, pageProps, initialAddress }) {
@@ -18,7 +19,7 @@ function MyApp({ Component, pageProps, initialAddress }) {
         <title>TaDa! - Buy and sell influence stocks</title>
       </Head>
 
-      <WalletProvider address={initialAddress}>
+      <WalletProvider provider={provider} contracts={tokenContracts} address={initialAddress}>
         <Component {...pageProps} />
       </WalletProvider>
     </ChakraProvider>
