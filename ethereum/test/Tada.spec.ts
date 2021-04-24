@@ -104,6 +104,15 @@ describe("Tada!", () => {
       expect(tokenBalance).to.eq(ethers.utils.parseEther("1"))
     })
 
+    it("can estimate price for token", async () => {
+      // get estimated price
+      let estimatedPrice = await CreatorToken.estimateBuyPrice(ethers.utils.parseEther("1"))
+      let buyPrice = await CreatorToken.calculateBuyPrice(estimatedPrice)
+
+      expect(buyPrice.gte(ethers.utils.parseEther("1"))).to.be.true
+      expect(buyPrice.lt(ethers.utils.parseEther("1.1"))).to.be.true
+    })
+
     it("user can buy creator tokens", async () => {
       // faucet user account
       const receiver = account2

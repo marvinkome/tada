@@ -114,4 +114,47 @@ contract BancorBondingCurve is Power {
 
     return oldBalance.sub(newBalance).div(result);
   }
+
+  /**
+   * @dev given a pool token supply, reserve balance, reserve ratio and an amount of requested pool tokens,
+   * calculates the amount of reserve tokens required for purchasing the given amount of pool tokens
+   *
+   * Formula:
+   * return = _reserveBalance * (((_supply + _amount) / _supply) ^ (MAX_WEIGHT / _reserveRatio) - 1)
+   *
+   * @param _supply          pool token supply
+   * @param _reserveBalance  reserve balance
+   * @param _reserveRatio    reserve ratio, represented in ppm (2-2000000)
+   * @param _amount          requested amount of pool tokens
+   *
+   * @return reserve token amount
+   */
+  function fundCost(
+    uint256 _supply,
+    uint256 _reserveBalance,
+    uint32 _reserveRatio,
+    uint256 _amount
+  ) public view returns (uint256) {
+    // validate input
+    require(
+      _supply > 0 && _reserveBalance > 0 && _reserveRatio > 0 && _reserveRatio <= MAX_RESERVE_RATIO
+    );
+
+    // special case for 0 amount
+    if (_amount == 0) {
+      return 0;
+    }
+
+    // special case if the reserve ratio = 100%
+    if (_reserveRatio == MAX_RESERVE_RATIO) {
+      return (_amount.mul(_reserveBalance) - 1) / _supply + 1;
+    }
+
+    uint256 result;
+    uint8 precision;
+    uint256 baseN = _supply.add(_amount);
+    (result, precision) = power(baseN, _supply, MAX_RESERVE_RATIO, _reserveRatio);
+    uint256 temp = ((_reserveBalance.mul(result) - 1) >> precision) + 1;
+    return temp - _reserveBalance;
+  }
 }

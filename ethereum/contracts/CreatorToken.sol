@@ -51,12 +51,18 @@ contract CreatorToken is BancorBondingCurve, ERC20 {
     platformToken.transfer(msg.sender, returnAmount);
   }
 
-  function calculateBuyPrice(uint256 _amount) public view returns (uint256 mintAmount) {
-    return calculatePurchaseReturn(totalSupply(), reserveBalance, uint32(reserveRatio), _amount);
+  function calculateBuyPrice(uint256 _amountInShill) public view returns (uint256 mintAmount) {
+    return
+      calculatePurchaseReturn(totalSupply(), reserveBalance, uint32(reserveRatio), _amountInShill);
   }
 
-  function calculateSellPrice(uint256 _amount) public view returns (uint256 burnAmount) {
-    return calculateSaleReturn(totalSupply(), reserveBalance, uint32(reserveRatio), _amount);
+  // estimated price of 1 creator token
+  function estimateBuyPrice(uint256 _buyAmount) public view returns (uint256 tokenPrice) {
+    return fundCost(totalSupply(), reserveBalance, uint32(reserveRatio), _buyAmount);
+  }
+
+  function calculateSellPrice(uint256 _tokenAmount) public view returns (uint256 burnAmount) {
+    return calculateSaleReturn(totalSupply(), reserveBalance, uint32(reserveRatio), _tokenAmount);
   }
 
   function _continuousMint(uint256 _deposit) internal returns (uint256) {
