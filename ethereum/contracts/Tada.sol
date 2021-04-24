@@ -2,9 +2,10 @@
 pragma solidity ^0.8.3;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CreatorToken.sol";
 
-contract TaDa {
+contract TaDa is Ownable {
   struct Creator {
     address creatorToken;
     string tokenSymbol;
@@ -33,7 +34,7 @@ contract TaDa {
     hasFaucetAddress[msg.sender] = true;
   }
 
-  function makeCreatorToken(string memory name_, string memory symbol_) public {
+  function makeCreatorToken(string memory name_, string memory symbol_) public onlyOwner {
     Creator memory newCreator =
       Creator({
         creatorToken: address(new CreatorToken(name_, symbol_, reserveRatio, token)),
