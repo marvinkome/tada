@@ -28,6 +28,16 @@ export function useBalance(token: string) {
   return balance[token]
 }
 
+export function useUpdateBalance(token: string) {
+  const [state, actions] = useWalletContext()
+  const wallet = useWallet()
+
+  return React.useCallback(async () => {
+    const balance = await state.contractInterface.getTokenBalance(token, wallet)
+    actions.updateBalance(token, balance)
+  }, [wallet, state.balance[token]])
+}
+
 export function useAllBalances() {
   const [{ balance }] = useWalletContext()
 

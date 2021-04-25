@@ -24,14 +24,14 @@ contract TaDa is Ownable {
     token = _tokenAddress;
   }
 
-  function faucetToken(string memory userId) public {
+  function faucetToken(address user, string memory userId) public onlyOwner {
     require(!hasFaucetUserId[userId], "User signed up already");
-    require(!hasFaucetAddress[msg.sender], "User signed up already");
+    require(!hasFaucetAddress[user], "User signed up already");
 
-    token.transfer(msg.sender, 50 * scale);
+    token.transfer(user, 50 * scale);
 
     hasFaucetUserId[userId] = true;
-    hasFaucetAddress[msg.sender] = true;
+    hasFaucetAddress[user] = true;
   }
 
   function makeCreatorToken(string memory name_, string memory symbol_) public onlyOwner {

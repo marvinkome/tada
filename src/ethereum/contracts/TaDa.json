@@ -56,6 +56,11 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
         "internalType": "string",
         "name": "userId",
         "type": "string"

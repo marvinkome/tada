@@ -57,32 +57,31 @@ describe("Tada!", () => {
 
   describe("Token Transfer", () => {
     it("should transfer token to user", async () => {
-      const receiver = account2
       const receiverAddress = await account2.getAddress()
 
-      await TadaContract.connect(receiver).faucetToken(googleId1)
+      await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
       const receiverBalance = (await ShillToken.balanceOf(receiverAddress)).toString()
 
       expect(receiverBalance).to.eq(ethers.utils.parseEther("50"))
     })
 
     it("should revert when requesting token twice", async () => {
-      const receiver = account2
-      const receiver2 = account3
+      const receiverAddress = await account2.getAddress()
+      const secondReceiverAddress = await account3.getAddress()
 
-      await TadaContract.connect(receiver).faucetToken(googleId1)
+      await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
 
-      await expect(TadaContract.connect(receiver).faucetToken(googleId1)).to.be.revertedWith(
-        "User signed up already"
-      )
+      await expect(
+        TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
+      ).to.be.revertedWith("User signed up already")
 
-      await expect(TadaContract.connect(receiver).faucetToken(googleId2)).to.be.revertedWith(
-        "User signed up already"
-      )
+      await expect(
+        TadaContract.connect(account1).faucetToken(receiverAddress, googleId2)
+      ).to.be.revertedWith("User signed up already")
 
-      await expect(TadaContract.connect(receiver2).faucetToken(googleId1)).to.be.revertedWith(
-        "User signed up already"
-      )
+      await expect(
+        TadaContract.connect(account1).faucetToken(secondReceiverAddress, googleId1)
+      ).to.be.revertedWith("User signed up already")
     })
   })
 
@@ -117,7 +116,7 @@ describe("Tada!", () => {
       // faucet user account
       const receiver = account2
       const receiverAddress = await account2.getAddress()
-      await TadaContract.connect(receiver).faucetToken(googleId1)
+      await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
 
       // buy 10 SHILL worth of creator tokens
       await ShillToken.connect(receiver).approve(
@@ -135,7 +134,7 @@ describe("Tada!", () => {
       // faucet user account
       const receiver = account2
       const receiverAddress = await account2.getAddress()
-      await TadaContract.connect(receiver).faucetToken(googleId1)
+      await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
 
       // buy 10 SHILL worth of creator tokens
       await ShillToken.connect(receiver).approve(
@@ -155,7 +154,8 @@ describe("Tada!", () => {
     it("creator token price changes when you buy token", async () => {
       // faucet user account
       const receiver = account2
-      await TadaContract.connect(receiver).faucetToken(googleId1)
+      const receiverAddress = await account2.getAddress()
+      await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
 
       // price of selling 1 creator token
       let initSellPrice = await CreatorToken.calculateSellPrice(ethers.utils.parseEther("1"))

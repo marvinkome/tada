@@ -16,8 +16,11 @@ import {
 import { CoinIcon } from "components/coin-icon"
 import { RiSearchLine } from "react-icons/ri"
 import { Header } from "components/header"
+import { useVerifyAccount } from "hooks/wallet"
 
 const Home: React.FC = () => {
+  const verifyAccount = useVerifyAccount()
+
   return (
     <Container my={[4, 14]}>
       <Header />
@@ -25,18 +28,26 @@ const Home: React.FC = () => {
       {/*  body */}
       <chakra.main my={10}>
         {/* header */}
+
         <VStack mb={24} spacing={10}>
           <Heading textAlign="center" variant="title">
             Own tokens of your favorite YouTube creators
           </Heading>
-
           <Heading mb={16} px={12} fontSize="lg" textAlign="center" variant="subTitle">
             Use tokens to vote for creators. Token value goes up as more people votes
           </Heading>
 
-          <Button leftIcon={<CoinIcon />} size="lg" variant="primary">
-            50 free tokens on sign up
-          </Button>
+          {!verifyAccount.isVerified && (
+            <Button
+              disabled={!verifyAccount.loaded}
+              onClick={verifyAccount.signIn}
+              leftIcon={<CoinIcon />}
+              size="lg"
+              variant="primary"
+            >
+              50 free tokens on sign up
+            </Button>
+          )}
         </VStack>
 
         {/* creators section */}

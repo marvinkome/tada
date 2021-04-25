@@ -39,7 +39,9 @@ async function main() {
   const shillToken = await ShillToken.deploy(ethers.utils.parseEther(`${initialSupply}`))
   const tada = await Tada.deploy(shillToken.address)
 
-  await shillToken.connect(deployer).transfer(tada.address, initialSupply * 0.8)
+  await shillToken
+    .connect(deployer)
+    .transfer(tada.address, ethers.utils.parseEther(`${initialSupply * 0.8}`))
 
   console.log("TaDa Contract address: ", tada.address)
   console.log("ShillToken Contract address: ", shillToken.address)
