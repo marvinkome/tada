@@ -4,17 +4,120 @@ import {
   chakra,
   Container,
   Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Heading,
   Image,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
   StackDivider,
   Text,
+  useClipboard,
+  useDisclosure,
+  useToast,
   VStack,
 } from "@chakra-ui/react"
 import { Header } from "components/header"
 import { FiCopy } from "react-icons/fi"
 import { CoinIcon } from "components/coin-icon"
+import { useAddress, useAllBalances, useImportWallet, useMnemonic } from "burner-wallet/hooks"
+import { truncateAddress } from "lib/utils"
+
+const ImportWallet: React.FC = () => {
+  const toast = useToast()
+  const importWallet = useImportWallet()
+
+  const [error, setError] = React.useState("")
+  const [mnemonic, setMnemonic] = React.useState("")
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setError("")
+    setMnemonic(event.target.value)
+  }
+
+  const handleSubmit = async (event?: React.FormEvent<HTMLFormElement>) => {
+    event?.preventDefault()
+
+    importWallet(mnemonic)
+      .then(() => {
+        toast({
+          title: "Wallet imported",
+          description: `Your wallet have been imported`,
+          status: "success",
+          isClosable: true,
+          position: "top-right",
+        })
+
+        setMnemonic("")
+      })
+      .catch((err) => {
+        console.log(err)
+        setError("Failed to import wallet. Please check your seed phrase and try again")
+      })
+  }
+
+  return (
+    <>
+      <Button
+        onClick={onOpen}
+        isFullWidth
+        rounded="full"
+        colorScheme="white"
+        size="lg"
+        variant="outline"
+      >
+        Import wallet
+      </Button>
+
+      <Modal isCentered isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Import Wallet</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={handleSubmit}>
+              <FormControl isInvalid={!!error} mb={5} id="importWallet">
+                <FormLabel>Import Wallet</FormLabel>
+                <Input
+                  onChange={handleChange}
+                  value={mnemonic}
+                  size="lg"
+                  placeholder="Your seed phrase"
+                  type="text"
+                />
+                <FormErrorMessage>{error}</FormErrorMessage>
+              </FormControl>
+
+              <Button colorScheme="blue" variant="outline" type="submit">
+                Import wallet
+              </Button>
+            </form>
+          </ModalBody>
+
+          <ModalFooter />
+        </ModalContent>
+      </Modal>
+    </>
+  )
+}
 
 const WalletPage: React.FC = () => {
+  const address = useAddress()
+  const addressCopy = useClipboard(address)
+  const mnemonic = useMnemonic()
+  const walletExport = useClipboard(mnemonic)
+  const allBalance = useAllBalances()
+
   return (
     <Container my={[4, 14]}>
       <Header />
@@ -25,7 +128,7 @@ const WalletPage: React.FC = () => {
         <chakra.div
           py={3}
           px={8}
-          mb={20}
+          mb={10}
           bgColor="accent.900"
           rounded="20px"
           shadow="0px 3px 10px rgba(255, 255, 255, 0.25)"
@@ -33,12 +136,35 @@ const WalletPage: React.FC = () => {
           <Text mb={7}>Wallet address</Text>
 
           <chakra.div textAlign="center">
-            <Text mb={3}>0x24451bfc193...D49b69BF6b</Text>
-            <Button rounded="xl" rightIcon={<FiCopy />} variant="outline">
-              Copy
+            <Text fontSize="lg" mb={3}>
+              {truncateAddress(address, 10)}
+            </Text>
+            <Button
+              onClick={addressCopy.onCopy}
+              rounded="xl"
+              rightIcon={<FiCopy />}
+              variant="outline"
+            >
+              {addressCopy.hasCopied ? "Copied" : "Copy"}
             </Button>
           </chakra.div>
         </chakra.div>
+
+        {/* token settings */}
+        <Stack direction={["column", "row"]} mb={20} spacing={7}>
+          <Button
+            onClick={walletExport.onCopy}
+            isFullWidth
+            rounded="full"
+            colorScheme="white"
+            size="lg"
+            variant="outline"
+          >
+            {walletExport.hasCopied ? "Exported!" : "Export wallet"}
+          </Button>
+
+          <ImportWallet />
+        </Stack>
 
         {/* your tokens list */}
         <chakra.div>
@@ -47,28 +173,26 @@ const WalletPage: React.FC = () => {
           </Heading>
 
           <VStack divider={<StackDivider opacity="0.5" bgColor="primary.700" />} spacing={5}>
-            <Flex width="100%" align="center">
-              <CoinIcon boxSize="40px" mr={6} />
+            {Object.keys(allBalance).map((key) => (
+              <Flex key={key} width="100%" align="center">
+                {key === "shill" ? (
+                  <CoinIcon boxSize="40px" mr={6} />
+                ) : (
+                  <Image
+                    rounded="full"
+                    boxSize="40px"
+                    objectFit="cover"
+                    src={`/${key}.jpeg`}
+                    alt={key}
+                    mr={6}
+                  />
+                )}
 
-              <Text>SHILL</Text>
+                <Text>{key.toUpperCase()}</Text>
 
-              <Text ml="auto">50</Text>
-            </Flex>
-
-            <Flex width="100%" align="center">
-              <Image
-                rounded="full"
-                boxSize="40px"
-                objectFit="cover"
-                src="/mark-rober.jpeg"
-                alt="Mark Rober"
-                mr={6}
-              />
-
-              <Text>Mark Rober</Text>
-
-              <Text ml="auto">10</Text>
-            </Flex>
+                <Text ml="auto">{allBalance[key]}</Text>
+              </Flex>
+            ))}
           </VStack>
         </chakra.div>
       </chakra.main>

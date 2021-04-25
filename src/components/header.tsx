@@ -1,4 +1,5 @@
 import React from "react"
+import NextLink from "next/link"
 import { Flex, Heading, HStack, Text } from "@chakra-ui/react"
 import { CoinIcon } from "./coin-icon"
 import { IoWalletOutline } from "react-icons/io5"
@@ -17,11 +18,15 @@ export const Header: React.FC = () => {
 
   return (
     <Flex width="100%" justify="flex-end">
-      <HStack spacing={3} p={2} pr={3} rounded="full" bg="accent.900" align="center">
-        <CoinIcon />
-        <Text pr={1}>{balance}</Text>
-        <IoWalletOutline />
-      </HStack>
+      <NextLink href="/wallet">
+        <a>
+          <HStack spacing={3} p={2} pr={3} rounded="full" bg="accent.900" align="center">
+            <CoinIcon />
+            <Text pr={1}>{balance}</Text>
+            <IoWalletOutline />
+          </HStack>
+        </a>
+      </NextLink>
     </Flex>
   )
 }
