@@ -1,5 +1,6 @@
 import fs from "fs"
 import { ethers, artifacts } from "hardhat"
+import initialCreators from "../initial-creators.json"
 
 function saveFrontendFiles(tokenAddress: string, appAddress: string) {
   const contractsDir = __dirname + "/../../src/ethereum/contracts"
@@ -47,7 +48,11 @@ async function main() {
   console.log("ShillToken Contract address: ", shillToken.address)
 
   // deploy initial creator tokens
-  // store tokens in firestore
+  console.log("deploying initial creator tokens...")
+  for (let creator of initialCreators.creators.reverse()) {
+    await tada.connect(deployer).makeCreatorToken(creator.name, creator.token)
+  }
+  console.log("deployed initial creator tokens...DONE")
 
   // save frontend files
   saveFrontendFiles(shillToken.address, tada.address)

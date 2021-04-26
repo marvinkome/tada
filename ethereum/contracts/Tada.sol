@@ -9,6 +9,7 @@ contract TaDa is Ownable {
   struct Creator {
     address creatorToken;
     string tokenSymbol;
+    string tokenName;
   }
 
   mapping(string => bool) public hasFaucetUserId;
@@ -38,13 +39,14 @@ contract TaDa is Ownable {
     Creator memory newCreator =
       Creator({
         creatorToken: address(new CreatorToken(name_, symbol_, reserveRatio, token)),
-        tokenSymbol: symbol_
+        tokenSymbol: symbol_,
+        tokenName: name_
       });
 
     creators.push(newCreator);
   }
 
-  function getCreatorTokenCount() public view returns (uint256) {
-    return creators.length;
+  function getCreatorToken() public view returns (Creator[] memory) {
+    return creators;
   }
 }

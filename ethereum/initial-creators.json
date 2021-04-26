@@ -1,0 +1,100 @@
+{
+  "creators": [
+    {
+      "name": "Mark Rober",
+      "token": "MKR"
+    },
+    {
+      "name": "Naval",
+      "token": "NVL"
+    },
+    {
+      "name": "Jordan B Peterson",
+      "token": "JBP"
+    },
+    {
+      "name": "MrBeast",
+      "token": "MRB"
+    },
+    {
+      "name": "PewDiePie",
+      "token": "PDP"
+    },
+    {
+      "name": "Dude Perfect",
+      "token": "DUDE"
+    },
+    {
+      "name": "Veritasium",
+      "token": "VRT"
+    },
+    {
+      "name": "Kurzgesagt",
+      "token": "KZG"
+    },
+    {
+      "name": "CGP Grey",
+      "token": "CGP"
+    },
+    {
+      "name": "Kee & Peele",
+      "token": "KAP"
+    },
+    {
+      "name": "Lex Fridman",
+      "token": "LEX"
+    },
+    {
+      "name": "PowerfulJRE",
+      "token": "JRE"
+    },
+    {
+      "name": "Akira The Don",
+      "token": "ATD"
+    },
+    {
+      "name": "Casually Explained",
+      "token": "CEX"
+    },
+    {
+      "name": "Vsauce",
+      "token": "VSC"
+    },
+    {
+      "name": "Zach King",
+      "token": "ZKG"
+    },
+    {
+      "name": "Sam Harris",
+      "token": "SHS"
+    },
+    {
+      "name": "Daily Dose of Internet",
+      "token": "DDI"
+    },
+    {
+      "name": "Markiplier",
+      "token": "MKP"
+    },
+    {
+      "name": "DanTDM",
+      "token": "TDM"
+    },
+    {
+      "name": "Marques Brownlee",
+      "token": "MKB"
+    },
+    {
+      "name": "SmarterEveryDay",
+      "token": "SED"
+    },
+    {
+      "name": "Jake Paul",
+      "token": "JPL"
+    },
+    {
+      "name": "The Slow Mo Guys",
+      "token": "SMG"
+    }
+  ]
+}

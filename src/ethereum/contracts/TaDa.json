@@ -48,6 +48,11 @@
         "internalType": "string",
         "name": "tokenSymbol",
         "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "tokenName",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -73,12 +78,29 @@
   },
   {
     "inputs": [],
-    "name": "getCreatorTokenCount",
+    "name": "getCreatorToken",
     "outputs": [
       {
-        "internalType": "uint256",
+        "components": [
+          {
+            "internalType": "address",
+            "name": "creatorToken",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "tokenSymbol",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "tokenName",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct TaDa.Creator[]",
         "name": "",
-        "type": "uint256"
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",
