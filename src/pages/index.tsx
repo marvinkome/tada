@@ -82,7 +82,7 @@ const Tokens: React.FC = () => {
       <VStack divider={<StackDivider opacity="0.5" bgColor="primary.700" />} spacing={5}>
         {loaded
           ? data.map((token) => (
-              <NextLink key={token.symbol} href="/">
+              <NextLink key={token.symbol} href={`/creator/${token.address}`}>
                 <a style={{ width: "100%" }}>
                   <Flex width="100%" align="center">
                     <Image

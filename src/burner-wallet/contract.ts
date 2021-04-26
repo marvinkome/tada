@@ -10,7 +10,10 @@ export class ContractInterface {
   }
 
   addContract(name: string, contract: ethers.Contract) {
-    this.contracts.set(name, contract)
+    let hasContract = this.contracts.get(name)
+    if (!hasContract) {
+      this.contracts.set(name, contract)
+    }
   }
 
   async getAllTokenBalance(wallet: ethers.Wallet) {

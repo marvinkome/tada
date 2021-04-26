@@ -5,12 +5,16 @@
       "token": "NVL"
     },
     {
-      "name": "Veritasium",
-      "token": "VRT"
-    },
-    {
       "name": "Kurzgesagt",
       "token": "KZG"
+    },
+    {
+      "name": "Mark Rober",
+      "token": "MKR"
+    },
+    {
+      "name": "Veritasium",
+      "token": "VRT"
     },
     {
       "name": "CGP Grey",
@@ -36,10 +40,7 @@
       "name": "PowerfulJRE",
       "token": "JRE"
     },
-    {
-      "name": "Mark Rober",
-      "token": "MKR"
-    },
+
     {
       "name": "Akira The Don",
       "token": "ATD"

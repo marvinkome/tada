@@ -1,14 +1,15 @@
 import React from "react"
 import _sortBy from "lodash.sortby"
+import { useRouter } from "next/router"
 import { useToast } from "@chakra-ui/toast"
-import { useUpdateBalance, useWallet } from "burner-wallet/hooks"
+import { useAddTokenToWallet, useUpdateBalance, useWallet } from "burner-wallet/hooks"
 import { useGoogleLogin } from "react-google-login"
-import { checkAccountVerification, getCreators, getAllTokenPrice } from "ethereum"
+import { checkAccountVerification, getCreators, getAllTokenPrice, getCreatorInfo } from "ethereum"
 
 export function useVerifyAccount() {
   const [isVerified, setIsVerified] = React.useState(true)
   const toast = useToast()
-  const updateBalance = useUpdateBalance("shill")
+  const updateBalance = useUpdateBalance()
   const wallet = useWallet()
 
   React.useEffect(() => {
@@ -36,7 +37,7 @@ export function useVerifyAccount() {
 
         const data = await response.json()
         if (data.message === "Account funded") {
-          await updateBalance()
+          await updateBalance("shill")
           setIsVerified(true)
         }
       } catch (err) {
@@ -75,6 +76,7 @@ export function useVerifyAccount() {
 export function useGetCreators() {
   const toast = useToast()
   const wallet = useWallet()
+  const addTokenToWallet = useAddTokenToWallet()
   const [hasLoadedPrice, setHasLoadedPrice] = React.useState(false)
   const [tokens, setTokens] = React.useState<any[]>([])
 
@@ -90,6 +92,13 @@ export function useGetCreators() {
           symbol: tk.tokenSymbol,
           name: tk.tokenName,
         }))
+
+        // ---- SIDE EFFECT ----
+        // add token to burner wallet
+        tokens.forEach((token) => {
+          addTokenToWallet(token.symbol, token.address)
+        })
+        // ---- END SIDE EFFECT ----
 
         setHasLoadedPrice(false)
         setTokens(tokens)
@@ -143,4 +152,42 @@ export function useGetCreators() {
   }, [wallet, tokens, hasLoadedPrice])
 
   return { data: tokens }
+}
+
+export function useGetCreatorData() {
+  const router = useRouter()
+  const toast = useToast()
+  const wallet = useWallet()
+  const updateBalance = useUpdateBalance()
+  const addTokenToWallet = useAddTokenToWallet()
+  const [creatorData, setCreatorData] = React.useState<any>()
+  const { creatorId } = router.query
+
+  // fetch address info
+  React.useEffect(() => {
+    if (!wallet || !creatorId) return
+
+    async function getData() {
+      try {
+        const creatorData = await getCreatorInfo(wallet, creatorId as string)
+        setCreatorData(creatorData)
+
+        addTokenToWallet(creatorData.symbol, creatorData.contract)
+        updateBalance(creatorData.symbol)
+      } catch (err) {
+        // set error
+        console.error(err)
+        toast({
+          title: "Error fetching token data",
+          status: "error",
+          position: "top-right",
+          isClosable: true,
+        })
+      }
+    }
+
+    getData()
+  }, [wallet, creatorId])
+
+  return { data: creatorData }
 }

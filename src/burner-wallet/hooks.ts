@@ -1,4 +1,5 @@
-import React from "react"
+import React, { useEffect } from "react"
+import * as ethers from "ethers"
 import { Wallet } from "ethers"
 import { useWalletContext } from "./context"
 
@@ -22,20 +23,30 @@ export function useWallet() {
   return wallet
 }
 
+export function useAddTokenToWallet() {
+  const [{ contractInterface }] = useWalletContext()
+  return (token: string, contract: ethers.Contract) => {
+    contractInterface.addContract(token, contract)
+  }
+}
+
 export function useBalance(token: string) {
   const [{ balance }] = useWalletContext()
 
   return balance[token]
 }
 
-export function useUpdateBalance(token: string) {
+export function useUpdateBalance() {
   const [state, actions] = useWalletContext()
   const wallet = useWallet()
 
-  return React.useCallback(async () => {
-    const balance = await state.contractInterface.getTokenBalance(token, wallet)
-    actions.updateBalance(token, balance)
-  }, [wallet, state.balance[token]])
+  return React.useCallback(
+    async (token: string) => {
+      const balance = await state.contractInterface.getTokenBalance(token, wallet)
+      actions.updateBalance(token, balance)
+    },
+    [wallet]
+  )
 }
 
 export function useAllBalances() {
