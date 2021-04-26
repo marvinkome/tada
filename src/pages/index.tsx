@@ -90,7 +90,7 @@ const Tokens: React.FC = () => {
                       width="40px"
                       height="40px"
                       objectFit="cover"
-                      src="/mark-rober.jpeg"
+                      src={`/creators/${token.symbol.toLowerCase()}.jpeg`}
                       alt={token.name}
                     />
 

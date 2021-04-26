@@ -1,28 +1,8 @@
 {
   "creators": [
     {
-      "name": "Mark Rober",
-      "token": "MKR"
-    },
-    {
       "name": "Naval",
       "token": "NVL"
-    },
-    {
-      "name": "Jordan B Peterson",
-      "token": "JBP"
-    },
-    {
-      "name": "MrBeast",
-      "token": "MRB"
-    },
-    {
-      "name": "PewDiePie",
-      "token": "PDP"
-    },
-    {
-      "name": "Dude Perfect",
-      "token": "DUDE"
     },
     {
       "name": "Veritasium",
@@ -37,6 +17,14 @@
       "token": "CGP"
     },
     {
+      "name": "PewDiePie",
+      "token": "PDP"
+    },
+    {
+      "name": "Dude Perfect",
+      "token": "DUDE"
+    },
+    {
       "name": "Kee & Peele",
       "token": "KAP"
     },
@@ -49,12 +37,12 @@
       "token": "JRE"
     },
     {
-      "name": "Akira The Don",
-      "token": "ATD"
+      "name": "Mark Rober",
+      "token": "MKR"
     },
     {
-      "name": "Casually Explained",
-      "token": "CEX"
+      "name": "Akira The Don",
+      "token": "ATD"
     },
     {
       "name": "Vsauce",
@@ -81,6 +69,10 @@
       "token": "TDM"
     },
     {
+      "name": "The Slow Mo Guys",
+      "token": "SMG"
+    },
+    {
       "name": "Marques Brownlee",
       "token": "MKB"
     },
@@ -93,8 +85,16 @@
       "token": "JPL"
     },
     {
-      "name": "The Slow Mo Guys",
-      "token": "SMG"
+      "name": "Jordan B Peterson",
+      "token": "JBP"
+    },
+    {
+      "name": "MrBeast",
+      "token": "MRB"
+    },
+    {
+      "name": "Casually Explained",
+      "token": "CEX"
     }
   ]
 }
