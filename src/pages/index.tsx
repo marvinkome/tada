@@ -20,7 +20,7 @@ import {
 import { CoinIcon } from "components/coin-icon"
 import { RiSearchLine } from "react-icons/ri"
 import { Header } from "components/header"
-import { useVerifyAccount } from "hooks"
+import { useGetCreatorsPrice, useVerifyAccount } from "hooks"
 
 type Token = { address: string; symbol: string; name: string }
 
@@ -48,7 +48,8 @@ function useSearch(data: any[]) {
   }
 }
 
-const Home: React.FC<{ tokens: Token[] }> = ({ tokens }) => {
+const Home: React.FC<{ tokens: Token[] }> = ({ tokens: _tokens }) => {
+  const { data: tokens } = useGetCreatorsPrice(_tokens)
   const { data, search, query } = useSearch(tokens)
   const verifyAccount = useVerifyAccount()
 

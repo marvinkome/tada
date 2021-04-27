@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 import { useToast } from "@chakra-ui/toast"
 import { useAddTokenToWallet, useUpdateBalance, useWallet } from "burner-wallet/hooks"
 import { useGoogleLogin } from "react-google-login"
-import { checkAccountVerification, getCreators, getAllTokenPrice, getCreatorInfo } from "ethereum"
+import { checkAccountVerification, getAllTokenPrice, getCreatorInfo } from "ethereum"
 
 export function useVerifyAccount() {
   const [isVerified, setIsVerified] = React.useState(true)
@@ -73,58 +73,18 @@ export function useVerifyAccount() {
   return { ...data, isVerified }
 }
 
-export function useGetCreators() {
+export function useGetCreatorsPrice(initialTokens: any[]) {
   const toast = useToast()
-  const wallet = useWallet()
-  const addTokenToWallet = useAddTokenToWallet()
-  const [hasLoadedPrice, setHasLoadedPrice] = React.useState(false)
-  const [tokens, setTokens] = React.useState<any[]>([])
-
-  // fetch token
-  React.useEffect(() => {
-    if (!wallet) return
-
-    async function getData() {
-      try {
-        const tokenData = await getCreators(wallet)
-        let tokens = tokenData.map((tk: any) => ({
-          address: tk.creatorToken,
-          symbol: tk.tokenSymbol,
-          name: tk.tokenName,
-        }))
-
-        // ---- SIDE EFFECT ----
-        // add token to burner wallet
-        tokens.forEach((token) => {
-          addTokenToWallet(token.symbol, token.address)
-        })
-        // ---- END SIDE EFFECT ----
-
-        setHasLoadedPrice(false)
-        setTokens(tokens)
-      } catch (err) {
-        // set error
-        console.error(err)
-        toast({
-          title: "Error fetching token data",
-          status: "error",
-          position: "top-right",
-          isClosable: true,
-        })
-      }
-    }
-
-    getData()
-  }, [wallet])
+  const [tokens, setTokens] = React.useState<any[]>(initialTokens)
 
   // fetch price after tokens have loaded
   React.useEffect(() => {
-    if (!wallet || !tokens.length || hasLoadedPrice) return
+    if (!initialTokens.length) return
 
     async function getData() {
       try {
         // fetch additional data
-        const prices = await getAllTokenPrice(wallet, tokens)
+        const prices = await getAllTokenPrice(initialTokens)
         if (!prices) return
 
         const data = tokens.map((token) => ({
@@ -133,8 +93,6 @@ export function useGetCreators() {
         }))
 
         const newTokens = _sortBy(data, ["price"])
-
-        setHasLoadedPrice(true)
         setTokens(newTokens.reverse())
       } catch (err) {
         // set error
@@ -149,7 +107,7 @@ export function useGetCreators() {
     }
 
     getData()
-  }, [wallet, tokens, hasLoadedPrice])
+  }, [initialTokens])
 
   return { data: tokens }
 }

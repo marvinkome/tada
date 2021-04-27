@@ -6,16 +6,16 @@ export async function checkAccountVerification(wallet: ethers.Wallet) {
   return !!(await tadaContract.connect(wallet.connect(provider)).hasFaucetAddress(wallet.address))
 }
 
-export async function getCreators(wallet: ethers.Wallet) {
-  const data = await tadaContract.connect(wallet.connect(provider)).getCreatorToken()
+export async function getCreators() {
+  const data = await tadaContract.getCreatorToken()
 
   return data
 }
 
 // creator tokens
-export async function getAllTokenPrice(wallet: ethers.Wallet, tokens: any[]) {
+export async function getAllTokenPrice(tokens: any[]) {
   const getPriceAndSymbol = async (address: string) => {
-    const contract = getCreatorTokenContract(address).connect(wallet.connect(provider))
+    const contract = getCreatorTokenContract(address)
 
     const price = await contract.estimateBuyPrice(ethers.utils.parseEther("1"))
     const symbol = await contract.symbol()
