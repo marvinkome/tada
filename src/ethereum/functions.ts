@@ -33,12 +33,17 @@ export async function getAllTokenPrice(tokens: any[]) {
   return prices
 }
 
-export async function getCreatorInfo(wallet: ethers.Wallet, tokenAddress: string) {
-  const contract = getCreatorTokenContract(tokenAddress).connect(wallet.connect(provider))
+export async function getCreatorInfo(tokenAddress: string) {
+  const contract = getCreatorTokenContract(tokenAddress)
 
   const price = await contract.estimateBuyPrice(ethers.utils.parseEther("1"))
   const symbol = await contract.symbol()
   const name = await contract.name()
 
-  return { price: parseInt(ethers.utils.formatEther(price.toString()), 10), symbol, name, contract }
+  return {
+    price: parseInt(ethers.utils.formatEther(price.toString()), 10),
+    symbol,
+    name,
+    contract,
+  }
 }

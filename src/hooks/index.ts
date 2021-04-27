@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 import { useToast } from "@chakra-ui/toast"
 import { useAddTokenToWallet, useUpdateBalance, useWallet } from "burner-wallet/hooks"
 import { useGoogleLogin } from "react-google-login"
-import { checkAccountVerification, getAllTokenPrice, getCreatorInfo } from "ethereum"
+import { checkAccountVerification, getAllTokenPrice, getCreatorTokenContract } from "ethereum"
 
 export function useVerifyAccount() {
   const [isVerified, setIsVerified] = React.useState(true)
@@ -110,42 +110,4 @@ export function useGetCreatorsPrice(initialTokens: any[]) {
   }, [initialTokens])
 
   return { data: tokens }
-}
-
-export function useGetCreatorData() {
-  const router = useRouter()
-  const toast = useToast()
-  const wallet = useWallet()
-  const updateBalance = useUpdateBalance()
-  const addTokenToWallet = useAddTokenToWallet()
-  const [creatorData, setCreatorData] = React.useState<any>()
-  const { creatorId } = router.query
-
-  // fetch address info
-  React.useEffect(() => {
-    if (!wallet || !creatorId) return
-
-    async function getData() {
-      try {
-        const creatorData = await getCreatorInfo(wallet, creatorId as string)
-        setCreatorData(creatorData)
-
-        addTokenToWallet(creatorData.symbol, creatorData.contract)
-        updateBalance(creatorData.symbol)
-      } catch (err) {
-        // set error
-        console.error(err)
-        toast({
-          title: "Error fetching token data",
-          status: "error",
-          position: "top-right",
-          isClosable: true,
-        })
-      }
-    }
-
-    getData()
-  }, [wallet, creatorId])
-
-  return { data: creatorData }
 }
