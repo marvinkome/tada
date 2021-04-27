@@ -1,6 +1,8 @@
 import React from "react"
 import NextImage from "next/image"
 import NextLink from "next/link"
+import { GetStaticProps } from "next"
+import { getCreators } from "ethereum"
 import {
   Button,
   chakra,
@@ -11,7 +13,6 @@ import {
   InputGroup,
   InputRightElement,
   Skeleton,
-  SkeletonCircle,
   StackDivider,
   Text,
   VStack,
@@ -19,7 +20,9 @@ import {
 import { CoinIcon } from "components/coin-icon"
 import { RiSearchLine } from "react-icons/ri"
 import { Header } from "components/header"
-import { useVerifyAccount, useGetCreators } from "hooks"
+import { useVerifyAccount } from "hooks"
+
+type Token = { address: string; symbol: string; name: string }
 
 const Image = chakra(NextImage, {
   shouldForwardProp: () => true,
@@ -29,59 +32,70 @@ function useSearch(data: any[]) {
   const [searchResult, setSearchResult] = React.useState(data)
   const [query, setQuery] = React.useState("")
 
-  const onChange = (query: string) => {
-    setQuery(query)
-    if (query.length > 2) {
-      const re = new RegExp(`.*${query}*`, "i")
+  const onChange = (q: string) => {
+    setQuery(q)
+
+    if (q.length) {
+      const re = new RegExp(`.*${q}*`, "i")
       setSearchResult(data.filter((data) => re.test(data.name)))
     }
   }
 
   return {
-    data: query.length > 2 ? searchResult : data,
+    data: query.length ? searchResult : data,
     search: onChange,
     query: query,
   }
 }
 
-const Tokens: React.FC = () => {
-  const { data: rawData } = useGetCreators()
-  const { data, search, query } = useSearch(rawData)
-  const loaded = !!rawData.length
-
-  let Loader = Array.from({ length: 3 }).map((_, i) => (
-    <Flex key={i} width="100%" align="center">
-      <SkeletonCircle mr={3} boxSize="40px" />
-
-      <Skeleton width="90px" height="24px" />
-
-      <chakra.div alignItems="center" ml="auto" display="flex">
-        <CoinIcon mr={2} />
-
-        <Skeleton width="40px" height="24px" />
-      </chakra.div>
-    </Flex>
-  ))
+const Home: React.FC<{ tokens: Token[] }> = ({ tokens }) => {
+  const { data, search, query } = useSearch(tokens)
+  const verifyAccount = useVerifyAccount()
 
   return (
-    <>
-      <Skeleton isLoaded={loaded} mb={12} width="100%">
-        <InputGroup size="lg">
-          <Input
-            border="none"
-            bg="whiteAlpha.300"
-            rounded="50px"
-            placeholder="Search for creator"
-            value={query}
-            onChange={(e) => search(e.target.value)}
-          />
-          <InputRightElement children={<RiSearchLine />} />
-        </InputGroup>
-      </Skeleton>
+    <Container my={[4, 14]}>
+      <Header />
 
-      <VStack divider={<StackDivider opacity="0.5" bgColor="primary.700" />} spacing={5}>
-        {loaded
-          ? data.map((token) => (
+      {/*  body */}
+      <chakra.main my={10}>
+        {/* header */}
+        <VStack mb={24} spacing={10}>
+          <Heading textAlign="center" variant="title">
+            Own tokens of your favorite YouTube creators
+          </Heading>
+          <Heading mb={16} px={12} fontSize="lg" textAlign="center" variant="subTitle">
+            Use tokens to vote for creators. Token value goes up as more people vote
+          </Heading>
+
+          {!verifyAccount.isVerified && (
+            <Button
+              disabled={!verifyAccount.loaded}
+              onClick={verifyAccount.signIn}
+              leftIcon={<CoinIcon />}
+              size="lg"
+              variant="primary"
+            >
+              50 free tokens on sign up
+            </Button>
+          )}
+        </VStack>
+
+        {/* creators section */}
+        <VStack mx={3} align="stretch">
+          <InputGroup mb={12} size="lg">
+            <Input
+              border="none"
+              bg="whiteAlpha.300"
+              rounded="50px"
+              placeholder="Search for creator"
+              value={query}
+              onChange={(e) => search(e.target.value)}
+            />
+            <InputRightElement children={<RiSearchLine />} />
+          </InputGroup>
+
+          <VStack divider={<StackDivider opacity="0.5" bgColor="primary.700" />} spacing={5}>
+            {data.map((token) => (
               <NextLink key={token.symbol} href={`/creator/${token.address}`}>
                 <a style={{ width: "100%" }}>
                   <Flex width="100%" align="center">
@@ -107,52 +121,24 @@ const Tokens: React.FC = () => {
                   </Flex>
                 </a>
               </NextLink>
-            ))
-          : Loader}
-      </VStack>
-    </>
-  )
-}
-
-const Home: React.FC = () => {
-  const verifyAccount = useVerifyAccount()
-
-  return (
-    <Container my={[4, 14]}>
-      <Header />
-
-      {/*  body */}
-      <chakra.main my={10}>
-        {/* header */}
-
-        <VStack mb={24} spacing={10}>
-          <Heading textAlign="center" variant="title">
-            Own tokens of your favorite YouTube creators
-          </Heading>
-          <Heading mb={16} px={12} fontSize="lg" textAlign="center" variant="subTitle">
-            Use tokens to vote for creators. Token value goes up as more people vote
-          </Heading>
-
-          {!verifyAccount.isVerified && (
-            <Button
-              disabled={!verifyAccount.loaded}
-              onClick={verifyAccount.signIn}
-              leftIcon={<CoinIcon />}
-              size="lg"
-              variant="primary"
-            >
-              50 free tokens on sign up
-            </Button>
-          )}
-        </VStack>
-
-        {/* creators section */}
-        <VStack mx={3} align="stretch">
-          <Tokens />
+            ))}
+          </VStack>
         </VStack>
       </chakra.main>
     </Container>
   )
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  // fetch all tokens without price
+  const tokenData = await getCreators()
+  const tokens = tokenData.map((token: any) => ({
+    address: token.creatorToken,
+    symbol: token.tokenSymbol,
+    name: token.tokenName,
+  }))
+
+  return { props: { tokens } }
 }
 
 export default Home
