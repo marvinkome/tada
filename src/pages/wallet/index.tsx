@@ -1,4 +1,5 @@
 import React from "react"
+import NextLink from "next/link"
 import { GetStaticProps } from "next"
 import {
   Button,
@@ -31,7 +32,13 @@ import {
 import { Header } from "components/header"
 import { FiCopy } from "react-icons/fi"
 import { CoinIcon } from "components/coin-icon"
-import { useAddress, useAllBalances, useImportWallet, useMnemonic } from "burner-wallet/hooks"
+import {
+  useAddress,
+  useAllBalances,
+  useGetTokenAddress,
+  useImportWallet,
+  useMnemonic,
+} from "burner-wallet/hooks"
 import { truncateAddress, truncateDecimal } from "lib/utils"
 import { getCreators } from "ethereum"
 import { useUpdateAllCreatorBalance } from "hooks"
@@ -117,11 +124,15 @@ const ImportWallet: React.FC = () => {
 }
 
 const WalletPage: React.FC<{ tokens: any[] }> = ({ tokens }) => {
+  const getTokenAddress = useGetTokenAddress()
   const updateInfo = useUpdateAllCreatorBalance(tokens)
+
   const address = useAddress()
   const addressCopy = useClipboard(address)
+
   const mnemonic = useMnemonic()
   const walletExport = useClipboard(mnemonic)
+
   const allBalance = useAllBalances()
 
   React.useEffect(() => {
@@ -186,24 +197,28 @@ const WalletPage: React.FC<{ tokens: any[] }> = ({ tokens }) => {
             {Object.keys(allBalance)
               .filter((key) => parseInt(allBalance[key], 10))
               .map((key) => (
-                <Flex key={key} width="100%" align="center">
-                  {key === "shill" ? (
-                    <CoinIcon boxSize="40px" mr={6} />
-                  ) : (
-                    <Image
-                      rounded="full"
-                      boxSize="40px"
-                      objectFit="cover"
-                      src={`/creators/${key.toLowerCase()}.jpeg`}
-                      alt={key}
-                      mr={6}
-                    />
-                  )}
+                <NextLink key={key} href={`/wallet/${getTokenAddress(key)}`}>
+                  <a style={{ width: "100%" }}>
+                    <Flex key={key} width="100%" align="center">
+                      {key === "shill" ? (
+                        <CoinIcon boxSize="40px" mr={6} />
+                      ) : (
+                        <Image
+                          rounded="full"
+                          boxSize="40px"
+                          objectFit="cover"
+                          src={`/creators/${key.toLowerCase()}.jpeg`}
+                          alt={key}
+                          mr={6}
+                        />
+                      )}
 
-                  <Text>{key.toUpperCase()}</Text>
+                      <Text>{key.toUpperCase()}</Text>
 
-                  <Text ml="auto">{truncateDecimal(allBalance[key], 2)}</Text>
-                </Flex>
+                      <Text ml="auto">{truncateDecimal(allBalance[key], 2)}</Text>
+                    </Flex>
+                  </a>
+                </NextLink>
               ))}
 
             {updateInfo.isLoadingAllBalances &&

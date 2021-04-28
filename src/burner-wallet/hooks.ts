@@ -30,6 +30,14 @@ export function useAddTokenToWallet() {
   }
 }
 
+export function useGetTokenAddress() {
+  const [state] = useWalletContext()
+
+  return (token: string) => {
+    return state.contractInterface.contracts.get(token).address
+  }
+}
+
 export function useBalance(token: string) {
   const [{ balance }] = useWalletContext()
 
