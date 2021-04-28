@@ -44,26 +44,27 @@ const TokenPage: React.FC<{
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    setFormState({ ...formState, sending: true })
+    setFormState((state) => ({ ...state, sending: true }))
     try {
       if (parseFloat(amount) < 0) throw Error("Please specify amount")
 
       await transferTokens(amount, receiver)
+
+      setAmount("")
+      setReceiver("")
+      toast({
+        title: "Transfer Successful",
+        description: `${amount} ${props.symbol} has been sent to ${receiver}`,
+        status: "success",
+        isClosable: true,
+        position: "top-right",
+      })
     } catch (err) {
-      setFormState({ ...formState, error: err.message })
+      console.log(err)
+      setFormState((state) => ({ ...state, error: err.reason }))
     }
 
-    setFormState({ ...formState, sending: false })
-    setAmount("")
-    setReceiver("")
-
-    toast({
-      title: "Transfer Successful",
-      description: `${amount} ${props.symbol} has been sent to ${receiver}`,
-      status: "success",
-      isClosable: true,
-      position: "top-right",
-    })
+    setFormState((state) => ({ ...state, sending: false }))
   }
 
   return (

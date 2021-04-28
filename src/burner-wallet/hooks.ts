@@ -89,7 +89,7 @@ export function useTransferTokens(token: string) {
       await state.contractInterface.transferToken(token, wallet, receiver, amount)
       await updateBalance(token)
     },
-    [wallet, state.balance[token]]
+    [wallet]
   )
 
   return transferToken

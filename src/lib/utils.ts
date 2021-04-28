@@ -6,5 +6,10 @@ export function truncateAddress(address: string, length: number): string {
 }
 
 export function truncateDecimal(str: string, maxDecimalDigits: number) {
-  return (+str).toFixed(maxDecimalDigits)
+  const res = (+str).toFixed(maxDecimalDigits)
+
+  // @ts-ignore
+  if (isNaN(res)) return "0"
+
+  return res
 }
