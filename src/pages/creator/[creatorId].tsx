@@ -1,5 +1,4 @@
 import React from "react"
-import NextImage from "next/image"
 import _debounce from "lodash.debounce"
 import { GetStaticPaths, GetStaticProps } from "next"
 import { getCreatorInfo, getCreators, getCreatorTokenContract, getTokenBuyPrice } from "ethereum"
@@ -35,14 +34,14 @@ function useTokenAmount(address: string) {
   const [sellPrice, setSellPrice] = React.useState("")
 
   const getBuyPrice = _debounce(async (amount) => {
-    if (!amount.length || parseInt(amount, 10) < 0) return
+    if (!amount.length || parseFloat(amount) < 0) return
 
     const price = await getTokenBuyPrice(contract, amount)
     setBuyPrice(price)
   }, 1000)
 
   const getSellPrice = _debounce(async (amount) => {
-    if (!amount.length || parseInt(amount, 10) < 0) return
+    if (!amount.length || parseFloat(amount) < 0) return
 
     const price = await getTokenBuyPrice(contract, amount)
     setSellPrice(price)

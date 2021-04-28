@@ -80,15 +80,14 @@ export function useImportWallet() {
 }
 
 export function useTransferTokens(token: string) {
-  const [state, actions] = useWalletContext()
+  const [state] = useWalletContext()
+  const updateBalance = useUpdateBalance()
   const wallet = useWallet()
 
   const transferToken = React.useCallback(
-    async (amount: number, receiver: string) => {
+    async (amount: string, receiver: string) => {
       await state.contractInterface.transferToken(token, wallet, receiver, amount)
-
-      const newBalance = state.balance[token] + amount
-      actions.updateBalance(token, newBalance)
+      await updateBalance(token)
     },
     [wallet, state.balance[token]]
   )

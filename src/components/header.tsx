@@ -9,7 +9,7 @@ import { truncateDecimal } from "lib/utils"
 export const Header: React.FC = () => {
   const balance = useBalance("shill")
 
-  if (!balance || parseInt(balance, 10) <= 0) {
+  if (!balance || parseFloat(balance) <= 0) {
     return (
       <Heading fontSize="2xl" textAlign="center" fontStyle="italic" textStyle="title">
         TaDa!

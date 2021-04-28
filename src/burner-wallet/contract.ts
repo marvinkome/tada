@@ -44,12 +44,18 @@ export class ContractInterface {
     return ethers.utils.formatEther(balance.toString())
   }
 
-  async transferToken(token: string, wallet: ethers.Wallet, address: string, amount: number) {
+  async transferToken(token: string, wallet: ethers.Wallet, address: string, amount: string) {
     let contract = this.contracts.get(token)
     if (!contract) {
       throw new Error("Token not added to wallet")
     }
 
-    await contract.connect(wallet.connect(this.provider)).transfer(address, amount)
+    if (!ethers.utils.isAddress(address)) {
+      throw new Error("Please specify a correct receiver address")
+    }
+
+    await contract
+      .connect(wallet.connect(this.provider))
+      .transfer(address, ethers.utils.parseEther(amount))
   }
 }

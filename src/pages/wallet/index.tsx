@@ -158,7 +158,7 @@ const WalletPage: React.FC<{ tokens: any[] }> = ({ tokens }) => {
 
           <chakra.div textAlign="center">
             <Text fontSize="lg" mb={3}>
-              {truncateAddress(address, 10)}
+              {truncateAddress(address || "", 10)}
             </Text>
             <Button
               onClick={addressCopy.onCopy}
@@ -195,7 +195,7 @@ const WalletPage: React.FC<{ tokens: any[] }> = ({ tokens }) => {
 
           <VStack divider={<StackDivider opacity="0.5" bgColor="primary.700" />} spacing={5}>
             {Object.keys(allBalance)
-              .filter((key) => parseInt(allBalance[key], 10))
+              .filter((key) => parseFloat(allBalance[key]))
               .map((key) => (
                 <NextLink key={key} href={`/wallet/${getTokenAddress(key)}`}>
                   <a style={{ width: "100%" }}>
