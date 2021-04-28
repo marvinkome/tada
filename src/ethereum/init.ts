@@ -12,7 +12,7 @@ export const provider = new ethers.providers.JsonRpcProvider()
 // contracts
 export const tadaContract = new ethers.Contract(addresses.Tada, tadaABI, provider)
 
-const tokenContract = new ethers.Contract(addresses.ShillToken, shillTokenABI, provider)
+export const tokenContract = new ethers.Contract(addresses.ShillToken, shillTokenABI, provider)
 export const tokenContracts = new Map<string, ethers.Contract>([["shill", tokenContract]])
 
 export function getCreatorTokenContract(address: string) {

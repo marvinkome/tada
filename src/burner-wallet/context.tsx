@@ -16,7 +16,7 @@ export const WalletContext = React.createContext([
   {
     account: "",
     address: "",
-    balance: {} as { [key: string]: number },
+    balance: {} as { [key: string]: string },
 
     contractInterface: null as ContractInterface,
   },
@@ -26,10 +26,10 @@ export const WalletContext = React.createContext([
     initialize: (data: {
       account?: string
       address?: string
-      balance?: { [key: string]: number }
+      balance?: { [key: string]: string }
     }) => null,
     addAccount: (account?: string) => null,
-    updateBalance: (token: string, newBalance: number) => null,
+    updateBalance: (token: string, newBalance: string) => null,
     reset: () => null,
   },
 ])
@@ -88,7 +88,7 @@ function useWallet(provider: ethers.providers.JsonRpcProvider, address?: string)
     dispatch({ type: REDUCER_ACTIONS.ADD_ACCOUNT, payload: { account } })
   }, [])
 
-  const updateBalance = React.useCallback((token: string, newBalance: number) => {
+  const updateBalance = React.useCallback((token: string, newBalance: string) => {
     dispatch({ type: REDUCER_ACTIONS.UPDATE_BALANCE, payload: { newBalance, token } })
   }, [])
 

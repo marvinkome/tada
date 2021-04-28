@@ -21,6 +21,7 @@ import { CoinIcon } from "components/coin-icon"
 import { RiSearchLine } from "react-icons/ri"
 import { Header } from "components/header"
 import { useGetCreatorsPrice, useVerifyAccount } from "hooks"
+import { truncateDecimal } from "lib/utils"
 
 type Token = { address: string; symbol: string; name: string }
 
@@ -114,7 +115,7 @@ const Home: React.FC<{ tokens: Token[] }> = ({ tokens: _tokens }) => {
                     <chakra.div alignItems="center" ml="auto" display="flex">
                       <CoinIcon mr={2} />
                       {token.price ? (
-                        <Text>{token.price}</Text>
+                        <Text>{truncateDecimal(token.price, 2)}</Text>
                       ) : (
                         <Skeleton width="40px" height="24px" />
                       )}

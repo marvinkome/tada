@@ -1,10 +1,16 @@
 import React from "react"
 import _sortBy from "lodash.sortby"
-import { useRouter } from "next/router"
+import _debounce from "lodash.debounce"
 import { useToast } from "@chakra-ui/toast"
 import { useAddTokenToWallet, useUpdateBalance, useWallet } from "burner-wallet/hooks"
 import { useGoogleLogin } from "react-google-login"
-import { checkAccountVerification, getAllTokenPrice, getCreatorTokenContract } from "ethereum"
+import {
+  buyTokens,
+  checkAccountVerification,
+  getAllTokenPrice,
+  getCreatorTokenContract,
+  sellTokens,
+} from "ethereum"
 
 export function useVerifyAccount() {
   const [isVerified, setIsVerified] = React.useState(true)
@@ -110,4 +116,93 @@ export function useGetCreatorsPrice(initialTokens: any[]) {
   }, [initialTokens])
 
   return { data: tokens }
+}
+
+export function useUpdateCreatorBalance({ address, symbol }: any) {
+  const toast = useToast()
+  const wallet = useWallet()
+  const updateBalance = useUpdateBalance()
+  const addTokenToWallet = useAddTokenToWallet()
+  const contract = getCreatorTokenContract(address)
+
+  // fetch address info
+  const callback = React.useCallback(async () => {
+    if (!wallet) return
+
+    try {
+      addTokenToWallet(symbol, contract)
+      updateBalance(symbol)
+    } catch (err) {
+      // set error
+      console.error(err)
+      toast({
+        title: "Error fetching token data",
+        status: "error",
+        position: "top-right",
+        isClosable: true,
+      })
+    }
+  }, [wallet])
+
+  return { wallet, updateCreatorBalance: callback }
+}
+
+export function useBuyToken({ address, symbol }: any) {
+  const contract = getCreatorTokenContract(address)
+  const updateBalance = useUpdateBalance()
+  const toast = useToast()
+  const wallet = useWallet()
+
+  return React.useCallback(
+    async (amount: string) => {
+      try {
+        await buyTokens(wallet, contract, amount)
+
+        // update balance
+        await updateBalance("shill")
+        await updateBalance(symbol)
+      } catch (err) {
+        // set error
+        console.error(err)
+        toast({
+          title: "Error purchasing tokens",
+          description: err.message,
+          status: "error",
+          position: "top-right",
+          isClosable: true,
+        })
+      }
+    },
+    [wallet]
+  )
+}
+
+export function useSellToken({ address, symbol }: any) {
+  const contract = getCreatorTokenContract(address)
+  const updateBalance = useUpdateBalance()
+  const toast = useToast()
+  const wallet = useWallet()
+
+  return React.useCallback(
+    async (amount: string) => {
+      try {
+        await sellTokens(wallet, contract, amount)
+
+        // update balance
+        await updateBalance("shill")
+        await updateBalance(symbol)
+      } catch (err) {
+        // set error
+        console.error(err)
+        toast({
+          title: "Error selling tokens",
+          description: err.message,
+          status: "error",
+          position: "top-right",
+          isClosable: true,
+        })
+      }
+    },
+    [wallet]
+  )
 }

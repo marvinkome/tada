@@ -29,7 +29,7 @@ import { Header } from "components/header"
 import { FiCopy } from "react-icons/fi"
 import { CoinIcon } from "components/coin-icon"
 import { useAddress, useAllBalances, useImportWallet, useMnemonic } from "burner-wallet/hooks"
-import { truncateAddress } from "lib/utils"
+import { truncateAddress, truncateDecimal } from "lib/utils"
 
 const ImportWallet: React.FC = () => {
   const toast = useToast()
@@ -182,7 +182,7 @@ const WalletPage: React.FC = () => {
                     rounded="full"
                     boxSize="40px"
                     objectFit="cover"
-                    src={`/${key}.jpeg`}
+                    src={`/creators/${key.toLowerCase()}.jpeg`}
                     alt={key}
                     mr={6}
                   />
@@ -190,7 +190,7 @@ const WalletPage: React.FC = () => {
 
                 <Text>{key.toUpperCase()}</Text>
 
-                <Text ml="auto">{allBalance[key]}</Text>
+                <Text ml="auto">{truncateDecimal(allBalance[key], 3)}</Text>
               </Flex>
             ))}
           </VStack>

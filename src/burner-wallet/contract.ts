@@ -17,14 +17,14 @@ export class ContractInterface {
   }
 
   async getAllTokenBalance(wallet: ethers.Wallet) {
-    let balances: { [key: string]: number } = {}
+    let balances: { [key: string]: string } = {}
 
     for (let [token, contract] of this.contracts) {
       let balance: ethers.BigNumber = await contract
         .connect(wallet.connect(this.provider))
         .balanceOf(wallet.address)
 
-      balances[token] = parseInt(ethers.utils.formatEther(balance.toString()), 10)
+      balances[token] = ethers.utils.formatEther(balance.toString())
     }
 
     return balances
@@ -34,14 +34,14 @@ export class ContractInterface {
     let contract = this.contracts.get(token)
     if (!contract) {
       console.error("Token not added to wallet")
-      return 0
+      return "0"
     }
 
     let balance: ethers.BigNumber = await contract
       .connect(wallet.connect(this.provider))
       .balanceOf(wallet.address)
 
-    return parseInt(ethers.utils.formatEther(balance.toString()), 10)
+    return ethers.utils.formatEther(balance.toString())
   }
 
   async transferToken(token: string, wallet: ethers.Wallet, address: string, amount: number) {

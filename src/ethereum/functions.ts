@@ -1,5 +1,5 @@
 import * as ethers from "ethers"
-import { tadaContract, getCreatorTokenContract, provider } from "./init"
+import { tadaContract, tokenContract, getCreatorTokenContract, provider } from "./init"
 
 // tada
 export async function checkAccountVerification(wallet: ethers.Wallet) {
@@ -27,7 +27,7 @@ export async function getAllTokenPrice(tokens: any[]) {
   const prices = {}
 
   rawPrices.forEach(([price, symbol]) => {
-    prices[symbol] = parseInt(ethers.utils.formatEther(price.toString()), 10)
+    prices[symbol] = ethers.utils.formatEther(price.toString())
   })
 
   return prices
@@ -41,9 +41,32 @@ export async function getCreatorInfo(tokenAddress: string) {
   const name = await contract.name()
 
   return {
-    price: parseInt(ethers.utils.formatEther(price.toString()), 10),
+    price: ethers.utils.formatEther(price.toString()),
     symbol,
     name,
     contract,
   }
+}
+
+export async function getTokenBuyPrice(contract: ethers.Contract, amount: string) {
+  const price = await contract.estimateBuyPrice(ethers.utils.parseEther(amount))
+  return ethers.utils.formatEther(price.toString())
+}
+
+export async function getTokenSellPrice(contract: ethers.Contract, amount: string) {
+  const price = await contract.calculateSellPrice(ethers.utils.parseEther(amount))
+  return ethers.utils.formatEther(price.toString())
+}
+
+export async function buyTokens(_wallet: ethers.Wallet, contract: ethers.Contract, amount: string) {
+  const wallet = _wallet.connect(provider)
+
+  await tokenContract.connect(wallet).approve(contract.address, ethers.utils.parseEther(amount))
+  await contract.connect(wallet).buy(ethers.utils.parseEther(amount))
+}
+
+export async function sellTokens(wallet: ethers.Wallet, contract: ethers.Contract, amount: string) {
+  wallet = wallet.connect(provider)
+
+  await contract.connect(wallet).sell(ethers.utils.parseEther(amount))
 }

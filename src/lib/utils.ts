@@ -4,3 +4,7 @@ export function truncateAddress(address: string, length: number): string {
     address.length
   )}`
 }
+
+export function truncateDecimal(str: string, maxDecimalDigits: number) {
+  return (+str).toFixed(maxDecimalDigits)
+}
