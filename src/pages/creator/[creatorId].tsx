@@ -11,6 +11,7 @@ import {
   VStack,
   HStack,
   Input,
+  Image,
   Button,
   Skeleton,
   useDisclosure,
@@ -26,10 +27,6 @@ import { CoinIcon } from "components/coin-icon"
 import { useBalance } from "burner-wallet/hooks"
 import { truncateDecimal } from "lib/utils"
 import { useBuyToken, useSellToken, useUpdateCreatorBalance } from "hooks"
-
-const Image = chakra(NextImage, {
-  shouldForwardProp: () => true,
-})
 
 function useTokenAmount(address: string) {
   const contract = getCreatorTokenContract(address)
@@ -244,8 +241,7 @@ const CreatorPage: React.FC<{
         <VStack mb={16} spacing={7}>
           <Image
             rounded="full"
-            width="150px"
-            height="150px"
+            boxSize="150px"
             objectFit="cover"
             src={`/creators/${symbol.toLowerCase()}.jpeg`}
             alt={name}

@@ -131,7 +131,7 @@ export function useUpdateCreatorBalance({ address, symbol }: any) {
 
     try {
       addTokenToWallet(symbol, contract)
-      updateBalance(symbol)
+      await updateBalance(symbol)
     } catch (err) {
       // set error
       console.error(err)
@@ -145,6 +145,46 @@ export function useUpdateCreatorBalance({ address, symbol }: any) {
   }, [wallet])
 
   return { wallet, updateCreatorBalance: callback }
+}
+
+export function useUpdateAllCreatorBalance(tokens: any[]) {
+  const toast = useToast()
+  const wallet = useWallet()
+  const updateBalance = useUpdateBalance()
+  const addTokenToWallet = useAddTokenToWallet()
+  const [isLoading, setIsLoading] = React.useState(true)
+
+  // fetch address info
+  const callback = React.useCallback(async () => {
+    if (!wallet) return
+
+    const tokensPromise = tokens.map((token) => {
+      const contract = getCreatorTokenContract(token.address)
+      addTokenToWallet(token.symbol, contract)
+
+      return updateBalance(token.symbol)
+    })
+
+    try {
+      await Promise.all(tokensPromise)
+      setIsLoading(false)
+    } catch (err) {
+      // set error
+      console.error(err)
+      toast({
+        title: "Error getting balances",
+        status: "error",
+        position: "top-right",
+        isClosable: true,
+      })
+    }
+  }, [wallet])
+
+  return {
+    wallet,
+    isLoadingAllBalances: isLoading,
+    updateAllCreatorBalance: callback,
+  }
 }
 
 export function useBuyToken({ address, symbol }: any) {

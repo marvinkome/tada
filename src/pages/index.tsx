@@ -1,5 +1,4 @@
 import React from "react"
-import NextImage from "next/image"
 import NextLink from "next/link"
 import { GetStaticProps } from "next"
 import { getCreators } from "ethereum"
@@ -10,6 +9,7 @@ import {
   Flex,
   Heading,
   Input,
+  Image,
   InputGroup,
   InputRightElement,
   Skeleton,
@@ -24,10 +24,6 @@ import { useGetCreatorsPrice, useVerifyAccount } from "hooks"
 import { truncateDecimal } from "lib/utils"
 
 type Token = { address: string; symbol: string; name: string }
-
-const Image = chakra(NextImage, {
-  shouldForwardProp: () => true,
-})
 
 function useSearch(data: any[]) {
   const [searchResult, setSearchResult] = React.useState(data)
@@ -103,8 +99,7 @@ const Home: React.FC<{ tokens: Token[] }> = ({ tokens: _tokens }) => {
                   <Flex width="100%" align="center">
                     <Image
                       rounded="full"
-                      width="40px"
-                      height="40px"
+                      boxSize="40px"
                       objectFit="cover"
                       src={`/creators/${token.symbol.toLowerCase()}.jpeg`}
                       alt={token.name}

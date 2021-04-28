@@ -1,4 +1,5 @@
 import React from "react"
+import { GetStaticProps } from "next"
 import {
   Button,
   chakra,
@@ -17,6 +18,8 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Skeleton,
+  SkeletonCircle,
   Stack,
   StackDivider,
   Text,
@@ -30,6 +33,8 @@ import { FiCopy } from "react-icons/fi"
 import { CoinIcon } from "components/coin-icon"
 import { useAddress, useAllBalances, useImportWallet, useMnemonic } from "burner-wallet/hooks"
 import { truncateAddress, truncateDecimal } from "lib/utils"
+import { getCreators } from "ethereum"
+import { useUpdateAllCreatorBalance } from "hooks"
 
 const ImportWallet: React.FC = () => {
   const toast = useToast()
@@ -111,12 +116,17 @@ const ImportWallet: React.FC = () => {
   )
 }
 
-const WalletPage: React.FC = () => {
+const WalletPage: React.FC<{ tokens: any[] }> = ({ tokens }) => {
+  const updateInfo = useUpdateAllCreatorBalance(tokens)
   const address = useAddress()
   const addressCopy = useClipboard(address)
   const mnemonic = useMnemonic()
   const walletExport = useClipboard(mnemonic)
   const allBalance = useAllBalances()
+
+  React.useEffect(() => {
+    updateInfo.updateAllCreatorBalance()
+  }, [updateInfo.wallet])
 
   return (
     <Container my={[4, 14]}>
@@ -173,31 +183,56 @@ const WalletPage: React.FC = () => {
           </Heading>
 
           <VStack divider={<StackDivider opacity="0.5" bgColor="primary.700" />} spacing={5}>
-            {Object.keys(allBalance).map((key) => (
-              <Flex key={key} width="100%" align="center">
-                {key === "shill" ? (
-                  <CoinIcon boxSize="40px" mr={6} />
-                ) : (
-                  <Image
-                    rounded="full"
-                    boxSize="40px"
-                    objectFit="cover"
-                    src={`/creators/${key.toLowerCase()}.jpeg`}
-                    alt={key}
-                    mr={6}
-                  />
-                )}
+            {Object.keys(allBalance)
+              .filter((key) => parseInt(allBalance[key], 10))
+              .map((key) => (
+                <Flex key={key} width="100%" align="center">
+                  {key === "shill" ? (
+                    <CoinIcon boxSize="40px" mr={6} />
+                  ) : (
+                    <Image
+                      rounded="full"
+                      boxSize="40px"
+                      objectFit="cover"
+                      src={`/creators/${key.toLowerCase()}.jpeg`}
+                      alt={key}
+                      mr={6}
+                    />
+                  )}
 
-                <Text>{key.toUpperCase()}</Text>
+                  <Text>{key.toUpperCase()}</Text>
 
-                <Text ml="auto">{truncateDecimal(allBalance[key], 3)}</Text>
-              </Flex>
-            ))}
+                  <Text ml="auto">{truncateDecimal(allBalance[key], 2)}</Text>
+                </Flex>
+              ))}
+
+            {updateInfo.isLoadingAllBalances &&
+              Array.from({ length: 2 }).map((_, idx) => (
+                <Flex key={idx} width="100%" align="center">
+                  <SkeletonCircle width="40px" height="40px" mr={6} />
+
+                  <Skeleton width="50px" height="24px" />
+
+                  <Skeleton ml="auto" width="35px" height="24px" />
+                </Flex>
+              ))}
           </VStack>
         </chakra.div>
       </chakra.main>
     </Container>
   )
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  // fetch all tokens without price
+  const tokenData = await getCreators()
+  const tokens = tokenData.map((token: any) => ({
+    address: token.creatorToken,
+    symbol: token.tokenSymbol,
+    name: token.tokenName,
+  }))
+
+  return { props: { tokens } }
 }
 
 export default WalletPage
