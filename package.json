@@ -14,7 +14,7 @@
     "deploy:local:ovm": "yarn hrd run ethereum/scripts/deploy-ovm.ts --network optimism",
     "deploy:prod:ovm": "yarn hrd run ethereum/scripts/deploy-ovm.ts --network optimism-prod",
     "test:eth": "yarn hrd test",
-    "test:ovm": "yarn hrd --network optimism test"
+    "test:ovm": "yarn hrd --network optimism-prod test"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.5.1",

@@ -22,13 +22,15 @@ const config: HardhatUserConfig = {
     "optimism-prod": {
       url: "https://kovan.optimism.io",
       accounts: {
-        mnemonic: process.env.mnemonic,
+        mnemonic: 'test test test test test test test test test test test junk',
       },
+      gasPrice: 0,
+      ovm: true,
     },
     optimism: {
       url: "http://127.0.0.1:8545",
       accounts: {
-        mnemonic: process.env.mnemonic,
+        mnemonic: 'test test test test test test test test test test test junk',
       },
       gasPrice: 0,
       ovm: true,

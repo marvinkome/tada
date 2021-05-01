@@ -27,14 +27,20 @@ describe("Tada!", () => {
     // create shill tokens
     ShillToken = await (await ethers.getContractFactory("ShillToken"))
       .connect(account1)
-      .deploy(ethers.utils.parseEther(initialSupply), { gasLimit: 8999999 })
+      .deploy(ethers.utils.parseEther(initialSupply), { 
+        gasPrice: 0,
+        gasLimit: 8999999 
+      })
 
     await ShillToken.deployTransaction.wait()
 
     // create main contract
     TadaContract = await (await ethers.getContractFactory("TaDa"))
       .connect(account1)
-      .deploy(ShillToken.address, { gasLimit: 8999999 })
+      .deploy(ShillToken.address, { 
+        gasPrice: 0,
+        gasLimit: 8999999 
+      })
 
     await TadaContract.deployTransaction.wait()
 
@@ -42,7 +48,10 @@ describe("Tada!", () => {
     const tx = await ShillToken.connect(account1).transfer(
       await TadaContract.address,
       ethers.utils.parseEther(initialSupply),
-      { gasLimit: 8999999 }
+      { 
+        gasPrice: 0,
+        gasLimit: 8999999 
+      }
     )
 
     await tx.wait()
@@ -67,6 +76,7 @@ describe("Tada!", () => {
 
       await (
         await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+          gasPrice: 0,
           gasLimit: 8999999,
         })
       ).wait()
@@ -82,11 +92,13 @@ describe("Tada!", () => {
 
       await (
         await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+          gasPrice: 0,
           gasLimit: 8999999,
         })
       ).wait()
 
       const err_tx1 = TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+        gasPrice: 0,
         gasLimit: 8999999,
       })
 
@@ -99,6 +111,7 @@ describe("Tada!", () => {
       }
 
       const err_tx2 = TadaContract.connect(account1).faucetToken(receiverAddress, googleId2, {
+        gasPrice: 0,
         gasLimit: 8999999,
       })
 
@@ -111,6 +124,7 @@ describe("Tada!", () => {
       }
 
       const err_tx3 = TadaContract.connect(account1).faucetToken(secondReceiverAddress, googleId1, {
+        gasPrice: 0,
         gasLimit: 8999999,
       })
 
@@ -128,7 +142,10 @@ describe("Tada!", () => {
     let CreatorToken: Contract
 
     beforeEach(async () => {
-      await (await TadaContract.makeCreatorToken("Mark Rober", "MKR", { gasLimit: 8999999 })).wait()
+      await (await TadaContract.makeCreatorToken("Mark Rober", "MKR", { 
+        gasPrice: 0,
+        gasLimit: 8999999
+      })).wait()
 
       const { creatorToken } = await TadaContract.creators(0)
       CreatorToken = await ethers.getContractAt("CreatorToken", creatorToken)
@@ -158,6 +175,7 @@ describe("Tada!", () => {
       const receiverAddress = await account2.getAddress()
       await (
         await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+          gasPrice: 0,
           gasLimit: 8999999,
         })
       ).wait()
@@ -167,12 +185,17 @@ describe("Tada!", () => {
         await ShillToken.connect(receiver).approve(
           CreatorToken.address,
           ethers.utils.parseEther("10"),
-          { gasLimit: 8999999 }
+          { 
+            gasPrice: 0,
+            gasLimit: 8999999
+          }
         )
       ).wait()
 
       await (
         await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"), {
+          
+          gasPrice: 0,
           gasLimit: 8999999,
         })
       ).wait()
@@ -188,6 +211,7 @@ describe("Tada!", () => {
       const receiverAddress = await account2.getAddress()
       await (
         await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+          gasPrice: 0,
           gasLimit: 8999999,
         })
       ).wait()
@@ -197,12 +221,16 @@ describe("Tada!", () => {
         await ShillToken.connect(receiver).approve(
           CreatorToken.address,
           ethers.utils.parseEther("10"),
-          { gasLimit: 8999999 }
+          { 
+            gasPrice: 0,
+            gasLimit: 8999999
+          }
         )
       ).wait()
 
       await (
         await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"), {
+          gasPrice: 0,
           gasLimit: 8999999,
         })
       ).wait()
@@ -210,6 +238,7 @@ describe("Tada!", () => {
       // sell 1 creator token
       await (
         await CreatorToken.connect(receiver).sell(ethers.utils.parseEther("1"), {
+          gasPrice: 0,
           gasLimit: 8999999,
         })
       ).wait()
@@ -225,6 +254,7 @@ describe("Tada!", () => {
       const receiverAddress = await account2.getAddress()
       await (
         await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+          gasPrice: 0,
           gasLimit: 8999999,
         })
       ).wait()
@@ -242,12 +272,16 @@ describe("Tada!", () => {
         await ShillToken.connect(receiver).approve(
           CreatorToken.address,
           ethers.utils.parseEther("10"),
-          { gasLimit: 8999999 }
+          { 
+            gasPrice: 0,
+            gasLimit: 8999999
+          }
         )
       ).wait()
 
       await (
         await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"), {
+          gasPrice: 0,
           gasLimit: 8999999,
         })
       ).wait()
@@ -261,6 +295,7 @@ describe("Tada!", () => {
       // user sells some creator tokens
       await (
         await CreatorToken.connect(receiver).sell(ethers.utils.parseEther("1"), {
+          gasPrice: 0,
           gasLimit: 8999999,
         })
       ).wait()
