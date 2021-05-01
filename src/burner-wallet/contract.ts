@@ -54,8 +54,11 @@ export class ContractInterface {
       throw new Error("Please specify a correct receiver address")
     }
 
-    await contract
+    const overrides = { gasLimit: 8999999 }
+    const tx = await contract
       .connect(wallet.connect(this.provider))
-      .transfer(address, ethers.utils.parseEther(amount))
+      .transfer(address, ethers.utils.parseEther(amount), overrides)
+
+    await tx.wait()
   }
 }

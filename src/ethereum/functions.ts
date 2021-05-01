@@ -61,12 +61,22 @@ export async function getTokenSellPrice(contract: ethers.Contract, amount: strin
 export async function buyTokens(_wallet: ethers.Wallet, contract: ethers.Contract, amount: string) {
   const wallet = _wallet.connect(provider)
 
-  await tokenContract.connect(wallet).approve(contract.address, ethers.utils.parseEther(amount))
-  await contract.connect(wallet).buy(ethers.utils.parseEther(amount))
+  const approveTx = await tokenContract
+    .connect(wallet)
+    .approve(contract.address, ethers.utils.parseEther(amount), { gasLimit: 8999999 })
+  await approveTx.wait()
+
+  const buyTx = await contract
+    .connect(wallet)
+    .buy(ethers.utils.parseEther(amount), { gasLimit: 8999999 })
+  await buyTx.wait()
 }
 
 export async function sellTokens(wallet: ethers.Wallet, contract: ethers.Contract, amount: string) {
   wallet = wallet.connect(provider)
 
-  await contract.connect(wallet).sell(ethers.utils.parseEther(amount))
+  const sellTx = await contract
+    .connect(wallet)
+    .sell(ethers.utils.parseEther(amount), { gasLimit: 8999999 })
+  await sellTx.wait()
 }

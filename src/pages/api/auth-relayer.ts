@@ -17,15 +17,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const deployer = ethers.Wallet.fromMnemonic(process.env.mnemonic).connect(provider)
 
     // call the faucet and send user shill tokens
-    await tadaContract.connect(deployer).faucetToken(address, googleId)
+    const tx = await tadaContract
+      .connect(deployer)
+      .faucetToken(address, googleId, { gasLimit: 8999999 })
+    await tx.wait()
 
     // also send the user some eth <3
-    const transaction = await deployer.sendTransaction({
-      to: address,
-      value: ethers.utils.parseEther("1.0"),
-    })
+    // pending until optimism needs gas
+    // const transaction = await deployer.sendTransaction({
+    //   to: address,
+    //   value: ethers.utils.parseEther("1.0"),
+    // })
 
-    await transaction.wait()
+    // await transaction.wait()
     res.status(200).json({ message: "Account funded" })
   } catch (err) {
     console.log(err)
