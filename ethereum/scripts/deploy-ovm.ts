@@ -39,7 +39,14 @@ async function main() {
   // deploy initial creator tokens
   console.log("deploying initial creator tokens...")
   for (let creator of initialCreators.creators.reverse()) {
-    const tx = await tada.connect(deployer).makeCreatorToken(creator.name, creator.token)
+    const tx = await tada.connect(deployer).makeCreatorToken(
+      creator.name, 
+      creator.token,
+      {
+        gasLimit: 8999999,
+        gasPrice: ethers.BigNumber.from("0"),
+      }
+    )
     await tx.wait()
   }
   console.log("deployed initial creator tokens...DONE")
