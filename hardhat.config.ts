@@ -19,7 +19,7 @@ const config: HardhatUserConfig = {
     solcVersion: "0.7.6",
   },
   networks: {
-    kovenOE: {
+    "optimism-prod": {
       url: "https://kovan.optimism.io",
       accounts: {
         mnemonic: process.env.mnemonic,

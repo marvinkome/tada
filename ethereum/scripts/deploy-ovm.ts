@@ -1,5 +1,5 @@
-import { saveFrontendFiles } from "./helpers"
 import { ethers } from "hardhat"
+import { saveFrontendFiles } from "./helpers"
 import initialCreators from "../initial-creators.json"
 
 async function main() {
@@ -12,12 +12,26 @@ async function main() {
   const ShillToken = await ethers.getContractFactory("ShillToken")
   const Tada = await ethers.getContractFactory("TaDa")
 
-  const shillToken = await ShillToken.deploy(ethers.utils.parseEther(`${initialSupply}`))
-  const tada = await Tada.deploy(shillToken.address)
+  // deploy shill token
+  const shillToken = await ShillToken.deploy(ethers.utils.parseEther(`${initialSupply}`), {
+    gasLimit: 8999999,
+    gasPrice: ethers.BigNumber.from("0"),
+  })
+  await shillToken.deployTransaction.wait()
 
-  await shillToken
-    .connect(deployer)
-    .transfer(tada.address, ethers.utils.parseEther(`${initialSupply * 0.8}`))
+  // deploy tada contract
+  const tada = await Tada.deploy(shillToken.address, {
+    gasLimit: 8999999,
+    gasPrice: ethers.BigNumber.from("0"),
+  })
+  await tada.deployTransaction.wait()
+
+  // transfer 80% of shill to tada contract
+  await (
+    await shillToken
+      .connect(deployer)
+      .transfer(tada.address, ethers.utils.parseEther(`${initialSupply * 0.8}`))
+  ).wait()
 
   console.log("TaDa Contract address: ", tada.address)
   console.log("ShillToken Contract address: ", shillToken.address)
@@ -25,7 +39,8 @@ async function main() {
   // deploy initial creator tokens
   console.log("deploying initial creator tokens...")
   for (let creator of initialCreators.creators.reverse()) {
-    await tada.connect(deployer).makeCreatorToken(creator.name, creator.token)
+    const tx = await tada.connect(deployer).makeCreatorToken(creator.name, creator.token)
+    await tx.wait()
   }
   console.log("deployed initial creator tokens...DONE")
 
