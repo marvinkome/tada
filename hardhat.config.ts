@@ -4,15 +4,19 @@ import { HardhatUserConfig } from "hardhat/types"
 import "./ethereum/tasks/faucet"
 import "@nomiclabs/hardhat-ethers"
 import "@nomiclabs/hardhat-waffle"
+import "@eth-optimism/hardhat-ovm"
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.3",
+    version: "0.7.6",
     settings: {
       optimizer: {
         enabled: true,
       },
     },
+  },
+  ovm: {
+    solcVersion: "0.7.6",
   },
   networks: {
     kovenOE: {
@@ -20,6 +24,14 @@ const config: HardhatUserConfig = {
       accounts: {
         mnemonic: process.env.mnemonic,
       },
+    },
+    optimism: {
+      url: "http://127.0.0.1:8545",
+      accounts: {
+        mnemonic: process.env.mnemonic,
+      },
+      gasPrice: 0,
+      ovm: true,
     },
   },
   paths: {

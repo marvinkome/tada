@@ -1,5 +1,5 @@
 import { expect } from "./setup"
-import { ethers } from "hardhat"
+import { ethers, network } from "hardhat"
 import { Contract, Signer, BigNumber } from "ethers"
 
 function convertPriceToEth(price: BigNumber) {
@@ -18,7 +18,6 @@ describe("Tada!", () => {
 
   const googleId1 = "105809056115901676361"
   const googleId2 = "105806056115901676362"
-  const googleId3 = "105805056115901676363"
 
   before(async () => {
     ;[account1, account2, account3] = await ethers.getSigners()
@@ -28,18 +27,25 @@ describe("Tada!", () => {
     // create shill tokens
     ShillToken = await (await ethers.getContractFactory("ShillToken"))
       .connect(account1)
-      .deploy(ethers.utils.parseEther(initialSupply))
+      .deploy(ethers.utils.parseEther(initialSupply), { gasLimit: 8999999 })
+
+    await ShillToken.deployTransaction.wait()
 
     // create main contract
     TadaContract = await (await ethers.getContractFactory("TaDa"))
       .connect(account1)
-      .deploy(ShillToken.address)
+      .deploy(ShillToken.address, { gasLimit: 8999999 })
+
+    await TadaContract.deployTransaction.wait()
 
     // send money to main contract
-    await ShillToken.connect(account1).transfer(
-      TadaContract.address,
-      ethers.utils.parseEther(initialSupply)
+    const tx = await ShillToken.connect(account1).transfer(
+      await TadaContract.address,
+      ethers.utils.parseEther(initialSupply),
+      { gasLimit: 8999999 }
     )
+
+    await tx.wait()
   })
 
   describe("Deploy", () => {
@@ -59,7 +65,12 @@ describe("Tada!", () => {
     it("should transfer token to user", async () => {
       const receiverAddress = await account2.getAddress()
 
-      await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
+      await (
+        await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+          gasLimit: 8999999,
+        })
+      ).wait()
+
       const receiverBalance = (await ShillToken.balanceOf(receiverAddress)).toString()
 
       expect(receiverBalance).to.eq(ethers.utils.parseEther("50"))
@@ -69,19 +80,47 @@ describe("Tada!", () => {
       const receiverAddress = await account2.getAddress()
       const secondReceiverAddress = await account3.getAddress()
 
-      await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
+      await (
+        await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+          gasLimit: 8999999,
+        })
+      ).wait()
 
-      await expect(
-        TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
-      ).to.be.revertedWith("User signed up already")
+      const err_tx1 = TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+        gasLimit: 8999999,
+      })
 
-      await expect(
-        TadaContract.connect(account1).faucetToken(receiverAddress, googleId2)
-      ).to.be.revertedWith("User signed up already")
+      if (network.ovm) {
+        // @ts-ignore
+        await expect((await err_tx1).wait()).to.be.rejected
+      } else {
+        // @ts-ignore
+        await expect(err_tx1).to.be.rejected
+      }
 
-      await expect(
-        TadaContract.connect(account1).faucetToken(secondReceiverAddress, googleId1)
-      ).to.be.revertedWith("User signed up already")
+      const err_tx2 = TadaContract.connect(account1).faucetToken(receiverAddress, googleId2, {
+        gasLimit: 8999999,
+      })
+
+      if (network.ovm) {
+        // @ts-ignore
+        await expect((await err_tx2).wait()).to.be.rejected
+      } else {
+        // @ts-ignore
+        await expect(err_tx2).to.be.rejected
+      }
+
+      const err_tx3 = TadaContract.connect(account1).faucetToken(secondReceiverAddress, googleId1, {
+        gasLimit: 8999999,
+      })
+
+      if (network.ovm) {
+        // @ts-ignore
+        await expect((await err_tx3).wait()).to.be.rejected
+      } else {
+        // @ts-ignore
+        await expect(err_tx3).to.be.rejected
+      }
     })
   })
 
@@ -89,7 +128,8 @@ describe("Tada!", () => {
     let CreatorToken: Contract
 
     beforeEach(async () => {
-      await TadaContract.makeCreatorToken("Mark Rober", "MKR")
+      await (await TadaContract.makeCreatorToken("Mark Rober", "MKR", { gasLimit: 8999999 })).wait()
+
       const { creatorToken } = await TadaContract.creators(0)
       CreatorToken = await ethers.getContractAt("CreatorToken", creatorToken)
     })
@@ -116,14 +156,26 @@ describe("Tada!", () => {
       // faucet user account
       const receiver = account2
       const receiverAddress = await account2.getAddress()
-      await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
+      await (
+        await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+          gasLimit: 8999999,
+        })
+      ).wait()
 
       // buy 10 SHILL worth of creator tokens
-      await ShillToken.connect(receiver).approve(
-        CreatorToken.address,
-        ethers.utils.parseEther("10")
-      )
-      await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"))
+      await (
+        await ShillToken.connect(receiver).approve(
+          CreatorToken.address,
+          ethers.utils.parseEther("10"),
+          { gasLimit: 8999999 }
+        )
+      ).wait()
+
+      await (
+        await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"), {
+          gasLimit: 8999999,
+        })
+      ).wait()
 
       // expect user to buy more than 1 creator tokens with 10 SHILL tokens
       let balanceOfReceiver = await CreatorToken.balanceOf(receiverAddress)
@@ -134,17 +186,33 @@ describe("Tada!", () => {
       // faucet user account
       const receiver = account2
       const receiverAddress = await account2.getAddress()
-      await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
+      await (
+        await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+          gasLimit: 8999999,
+        })
+      ).wait()
 
       // buy 10 SHILL worth of creator tokens
-      await ShillToken.connect(receiver).approve(
-        CreatorToken.address,
-        ethers.utils.parseEther("10")
-      )
-      await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"))
+      await (
+        await ShillToken.connect(receiver).approve(
+          CreatorToken.address,
+          ethers.utils.parseEther("10"),
+          { gasLimit: 8999999 }
+        )
+      ).wait()
+
+      await (
+        await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"), {
+          gasLimit: 8999999,
+        })
+      ).wait()
 
       // sell 1 creator token
-      await CreatorToken.connect(receiver).sell(ethers.utils.parseEther("1"))
+      await (
+        await CreatorToken.connect(receiver).sell(ethers.utils.parseEther("1"), {
+          gasLimit: 8999999,
+        })
+      ).wait()
 
       // expect user new balance to be less or equal initial value
       let balanceOfReceiver = await ShillToken.balanceOf(receiverAddress)
@@ -155,7 +223,11 @@ describe("Tada!", () => {
       // faucet user account
       const receiver = account2
       const receiverAddress = await account2.getAddress()
-      await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1)
+      await (
+        await TadaContract.connect(account1).faucetToken(receiverAddress, googleId1, {
+          gasLimit: 8999999,
+        })
+      ).wait()
 
       // price of selling 1 creator token
       let initSellPrice = await CreatorToken.calculateSellPrice(ethers.utils.parseEther("1"))
@@ -166,11 +238,19 @@ describe("Tada!", () => {
       expect(initSellPrice.gt(initBuyPrice)).to.be.true
 
       // user buys 10 creator token
-      await ShillToken.connect(receiver).approve(
-        CreatorToken.address,
-        ethers.utils.parseEther("10")
-      )
-      await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"))
+      await (
+        await ShillToken.connect(receiver).approve(
+          CreatorToken.address,
+          ethers.utils.parseEther("10"),
+          { gasLimit: 8999999 }
+        )
+      ).wait()
+
+      await (
+        await CreatorToken.connect(receiver).buy(ethers.utils.parseEther("10"), {
+          gasLimit: 8999999,
+        })
+      ).wait()
 
       let newSellPrice = await CreatorToken.calculateSellPrice(ethers.utils.parseEther("1"))
       let newBuyPrice = await CreatorToken.calculateBuyPrice(ethers.utils.parseEther("5"))
@@ -179,7 +259,11 @@ describe("Tada!", () => {
       expect(newBuyPrice.lt(initBuyPrice)).to.be.true
 
       // user sells some creator tokens
-      await CreatorToken.connect(receiver).sell(ethers.utils.parseEther("1"))
+      await (
+        await CreatorToken.connect(receiver).sell(ethers.utils.parseEther("1"), {
+          gasLimit: 8999999,
+        })
+      ).wait()
 
       let afterNewSellPrice = await CreatorToken.calculateSellPrice(ethers.utils.parseEther("1"))
       let afterNewBuyPrice = await CreatorToken.calculateBuyPrice(ethers.utils.parseEther("5"))
