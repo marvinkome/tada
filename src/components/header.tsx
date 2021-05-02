@@ -10,7 +10,7 @@ export const Header: React.FC = () => {
   const balance = useBalance("shill")
 
   return (
-    <Flex width="100%" justify="space-between">
+    <Flex px={4} width="100%" justify="space-between">
       <NextLink href="/">
         <a>
           <Heading fontSize="2xl" textAlign="center" fontStyle="italic" textStyle="title">
