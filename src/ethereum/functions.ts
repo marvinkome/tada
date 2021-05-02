@@ -63,12 +63,12 @@ export async function buyTokens(_wallet: ethers.Wallet, contract: ethers.Contrac
 
   const approveTx = await tokenContract
     .connect(wallet)
-    .approve(contract.address, ethers.utils.parseEther(amount), { gasLimit: 8999999 })
+    .approve(contract.address, ethers.utils.parseEther(amount), { gasLimit: 8999999, gasPrice: 0 })
   await approveTx.wait()
 
   const buyTx = await contract
     .connect(wallet)
-    .buy(ethers.utils.parseEther(amount), { gasLimit: 8999999 })
+    .buy(ethers.utils.parseEther(amount), { gasLimit: 8999999, gasPrice: 0 })
   await buyTx.wait()
 }
 
@@ -77,6 +77,6 @@ export async function sellTokens(wallet: ethers.Wallet, contract: ethers.Contrac
 
   const sellTx = await contract
     .connect(wallet)
-    .sell(ethers.utils.parseEther(amount), { gasLimit: 8999999 })
+    .sell(ethers.utils.parseEther(amount), { gasLimit: 8999999, gasPrice: 0 })
   await sellTx.wait()
 }

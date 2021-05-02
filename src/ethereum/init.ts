@@ -7,7 +7,7 @@ import tadaABI from "./contracts/TaDa.json"
 import addresses from "./contracts/contract-address.json"
 
 // const provider = new ethers.providers.JsonRpcProvider("https://kovan.optimism.io")
-export const provider = new ethers.providers.JsonRpcProvider()
+export const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_ETH_NETWORK)
 
 // contracts
 export const tadaContract = new ethers.Contract(addresses.Tada, tadaABI, provider)

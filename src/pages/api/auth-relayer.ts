@@ -19,7 +19,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // call the faucet and send user shill tokens
     const tx = await tadaContract
       .connect(deployer)
-      .faucetToken(address, googleId, { gasLimit: 8999999 })
+      .faucetToken(address, googleId, { gasLimit: 8999999, gasPrice: 0 })
     await tx.wait()
 
     // also send the user some eth <3
