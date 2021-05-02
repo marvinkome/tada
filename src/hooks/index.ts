@@ -14,6 +14,7 @@ import {
 
 export function useVerifyAccount() {
   const [isVerified, setIsVerified] = React.useState(true)
+  const [isVerifying, setIsVerifying] = React.useState(false)
   const toast = useToast()
   const updateBalance = useUpdateBalance()
   const wallet = useWallet()
@@ -31,6 +32,8 @@ export function useVerifyAccount() {
 
   const onSuccess = React.useCallback(
     async (googleResp: any) => {
+      setIsVerifying(true)
+
       try {
         const response = await fetch("/api/auth-relayer", {
           method: "POST",
@@ -46,6 +49,14 @@ export function useVerifyAccount() {
           await updateBalance("shill")
           setIsVerified(true)
         }
+
+        toast({
+          title: "Wallet funded",
+          description: "We've funded your wallet with 50 Shills. Enjoy",
+          status: "success",
+          position: "top-right",
+          isClosable: true,
+        })
       } catch (err) {
         console.error(err)
 
@@ -57,6 +68,8 @@ export function useVerifyAccount() {
           isClosable: true,
         })
       }
+
+      setIsVerifying(false)
     },
     [wallet]
   )
@@ -76,7 +89,7 @@ export function useVerifyAccount() {
     },
   })
 
-  return { ...data, isVerified }
+  return { ...data, isVerified, isVerifying }
 }
 
 export function useGetCreatorsPrice(initialTokens: any[]) {

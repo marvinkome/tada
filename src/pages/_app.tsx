@@ -16,7 +16,7 @@ function MyApp({ Component, pageProps, initialAddress }) {
           rel="stylesheet"
         />
 
-        <title>TaDa! - Buy and sell influence stocks</title>
+        <title>TaDa! - Buy and sell influencer stocks</title>
       </Head>
 
       <WalletProvider provider={provider} contracts={tokenContracts} address={initialAddress}>

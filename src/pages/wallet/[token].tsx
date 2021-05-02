@@ -122,6 +122,7 @@ const TokenPage: React.FC<{
                 size="lg"
                 type="text"
                 placeholder="Receiver's address"
+                _placeholder={{ color: "whiteAlpha.700" }}
                 value={receiver}
                 onChange={(e) => setReceiver(e.target.value)}
               />
@@ -134,6 +135,7 @@ const TokenPage: React.FC<{
                 size="lg"
                 type="number"
                 placeholder="Enter amount"
+                _placeholder={{ color: "whiteAlpha.700" }}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />

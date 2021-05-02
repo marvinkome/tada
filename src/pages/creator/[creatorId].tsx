@@ -283,6 +283,7 @@ const CreatorPage: React.FC<{
             rounded="xl"
             size="lg"
             placeholder="Enter amount"
+            _placeholder={{ color: "whiteAlpha.700" }}
             value={amount}
             onChange={(e) => onChange(e.target.value)}
           />

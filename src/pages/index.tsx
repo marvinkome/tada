@@ -69,6 +69,7 @@ const Home: React.FC<{ tokens: Token[] }> = ({ tokens: _tokens }) => {
             <Button
               disabled={!verifyAccount.loaded}
               onClick={verifyAccount.signIn}
+              isLoading={verifyAccount.isVerifying}
               leftIcon={<CoinIcon />}
               size="lg"
               variant="primary"
