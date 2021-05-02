@@ -34,6 +34,7 @@ MyApp.getInitialProps = async (appContext: AppContext) => {
   // get current address of the user
   const address = getAddressFromCookie(appContext.ctx, serverSide)
 
+  console.log("Initial Address: " + address)
   const appProps = await App.getInitialProps(appContext)
   return { ...appProps, initialAddress: address }
 }
