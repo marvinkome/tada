@@ -67,7 +67,7 @@ const ImportWallet: React.FC = () => {
       await importWallet(mnemonic)
       toast({
         title: "Wallet imported",
-        description: `Your wallet have been imported`,
+        description: `Your wallet has been imported`,
         status: "success",
         isClosable: true,
         position: "top-right",
@@ -185,7 +185,7 @@ const WalletPage: React.FC<{ tokens: any[] }> = ({ tokens }) => {
             size="lg"
             variant="outline"
           >
-            {walletExport.hasCopied ? "Exported!" : "Export wallet"}
+            {walletExport.hasCopied ? "Seed phrase copied!" : "Export wallet"}
           </Button>
 
           <ImportWallet />

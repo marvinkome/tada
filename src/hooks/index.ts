@@ -44,6 +44,10 @@ export function useVerifyAccount() {
           }),
         })
 
+        if (!response.ok) {
+          throw new Error("Error getting tokens")
+        }
+
         const data = await response.json()
         if (data.message === "Account funded") {
           await updateBalance("shill")
@@ -111,7 +115,7 @@ export function useGetCreatorsPrice(initialTokens: any[]) {
           price: prices[token.symbol],
         }))
 
-        const newTokens = _sortBy(data, ["price"])
+        const newTokens = _sortBy(data, [(o) => parseFloat(o.price)])
         setTokens(newTokens.reverse())
       } catch (err) {
         // set error

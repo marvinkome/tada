@@ -30,9 +30,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // })
 
     // await transaction.wait()
-    res.status(200).json({ message: "Account funded" })
+    return res.status(200).json({ message: "Account funded" })
   } catch (err) {
     console.log(err)
-    res.status(500).json({ message: "Something went wrong" })
+    return res.status(500).json({ message: "Something went wrong" })
   }
 }

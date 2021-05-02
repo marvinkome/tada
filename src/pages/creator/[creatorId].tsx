@@ -1,7 +1,13 @@
 import React from "react"
 import _debounce from "lodash.debounce"
 import { GetStaticPaths, GetStaticProps } from "next"
-import { getCreatorInfo, getCreators, getCreatorTokenContract, getTokenBuyPrice } from "ethereum"
+import {
+  getCreatorInfo,
+  getCreators,
+  getCreatorTokenContract,
+  getTokenBuyPrice,
+  getTokenSellPrice,
+} from "ethereum"
 import {
   chakra,
   Container,
@@ -38,14 +44,14 @@ function useTokenAmount(address: string) {
 
     const price = await getTokenBuyPrice(contract, amount)
     setBuyPrice(price)
-  }, 1000)
+  }, 500)
 
   const getSellPrice = _debounce(async (amount) => {
     if (!amount.length || parseFloat(amount) < 0) return
 
-    const price = await getTokenBuyPrice(contract, amount)
+    const price = await getTokenSellPrice(contract, amount)
     setSellPrice(price)
-  }, 1000)
+  }, 500)
 
   const onChange = async (amount: string) => {
     setAmount(amount)

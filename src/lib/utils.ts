@@ -16,5 +16,6 @@ export function truncateDecimal(str: string, maxDecimalDigits: number) {
   }
 
   // abbr number
+  if (+res < 1000) return res
   return abbreviateNumber(parseFloat(res), maxDecimalDigits)
 }
