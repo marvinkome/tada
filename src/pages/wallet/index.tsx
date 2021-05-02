@@ -48,6 +48,7 @@ const ImportWallet: React.FC = () => {
   const importWallet = useImportWallet()
 
   const [error, setError] = React.useState("")
+  const [loading, setLoading] = React.useState(false)
   const [mnemonic, setMnemonic] = React.useState("")
 
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -60,22 +61,25 @@ const ImportWallet: React.FC = () => {
   const handleSubmit = async (event?: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault()
 
-    importWallet(mnemonic)
-      .then(() => {
-        toast({
-          title: "Wallet imported",
-          description: `Your wallet have been imported`,
-          status: "success",
-          isClosable: true,
-          position: "top-right",
-        })
+    setLoading(true)
 
-        setMnemonic("")
+    try {
+      await importWallet(mnemonic)
+      toast({
+        title: "Wallet imported",
+        description: `Your wallet have been imported`,
+        status: "success",
+        isClosable: true,
+        position: "top-right",
       })
-      .catch((err) => {
-        console.log(err)
-        setError("Failed to import wallet. Please check your seed phrase and try again")
-      })
+
+      setMnemonic("")
+      onClose()
+    } catch (e) {
+      console.log(e)
+      setError("Failed to import wallet. Please check your seed phrase and try again")
+    }
+    setLoading(false)
   }
 
   return (
@@ -110,7 +114,7 @@ const ImportWallet: React.FC = () => {
                 <FormErrorMessage>{error}</FormErrorMessage>
               </FormControl>
 
-              <Button colorScheme="blue" variant="outline" type="submit">
+              <Button isLoading={loading} colorScheme="blue" variant="outline" type="submit">
                 Import wallet
               </Button>
             </form>
