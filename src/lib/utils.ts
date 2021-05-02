@@ -1,3 +1,5 @@
+import { abbreviateNumber } from "js-abbreviation-number"
+
 export function truncateAddress(address: string, length: number): string {
   return `${address.substring(0, length + 2)}...${address.substring(
     address.length - length,
@@ -6,10 +8,13 @@ export function truncateAddress(address: string, length: number): string {
 }
 
 export function truncateDecimal(str: string, maxDecimalDigits: number) {
-  const res = (+str).toFixed(maxDecimalDigits)
+  let res = (+str).toFixed(maxDecimalDigits)
 
   // @ts-ignore
-  if (isNaN(res)) return "0"
+  if (isNaN(res)) {
+    res = "0"
+  }
 
-  return res
+  // abbr number
+  return abbreviateNumber(parseFloat(res), maxDecimalDigits)
 }

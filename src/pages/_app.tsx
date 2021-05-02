@@ -11,6 +11,7 @@ function MyApp({ Component, pageProps, initialAddress }) {
     <ChakraProvider theme={theme}>
       <Head>
         <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link rel="shortcut icon" type="image/png" href="/favicon.png" />
         <link
           href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;0,600;1,700&display=swap"
           rel="stylesheet"

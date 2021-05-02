@@ -9,16 +9,16 @@ import { truncateDecimal } from "lib/utils"
 export const Header: React.FC = () => {
   const balance = useBalance("shill")
 
-  if (!balance || parseFloat(balance) <= 0) {
-    return (
-      <Heading fontSize="2xl" textAlign="center" fontStyle="italic" textStyle="title">
-        TaDa!
-      </Heading>
-    )
-  }
-
   return (
-    <Flex width="100%" justify="flex-end">
+    <Flex width="100%" justify="space-between">
+      <NextLink href="/">
+        <a>
+          <Heading fontSize="2xl" textAlign="center" fontStyle="italic" textStyle="title">
+            TaDa!
+          </Heading>
+        </a>
+      </NextLink>
+
       <NextLink href="/wallet">
         <a>
           <HStack spacing={3} p={2} pr={3} rounded="full" bg="accent.900" align="center">

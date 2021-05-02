@@ -26,6 +26,7 @@
     "@types/lodash.sortby": "^4.7.6",
     "dotenv": "^8.2.0",
     "framer-motion": "^4",
+    "js-abbreviation-number": "^1.1.2",
     "js-cookie": "^2.2.1",
     "lodash.debounce": "^4.0.8",
     "lodash.sortby": "^4.7.0",
