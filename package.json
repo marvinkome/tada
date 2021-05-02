@@ -12,9 +12,9 @@
     "compile:ovm": "yarn clean:eth && yarn hrd --network optimism compile",
     "deploy:local:eth": "yarn hrd run ethereum/scripts/deploy.ts --network localhost",
     "deploy:local:ovm": "yarn hrd run ethereum/scripts/deploy-ovm.ts --network optimism",
-    "deploy:prod:ovm": "yarn hrd run ethereum/scripts/deploy-ovm.ts --network optimism-prod",
+    "deploy:prod:ovm": "yarn hrd run ethereum/scripts/deploy-ovm.ts --network kovanOE",
     "test:eth": "yarn hrd test",
-    "test:ovm": "yarn hrd --network optimism-prod test"
+    "test:ovm": "yarn hrd --network optimism test"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.5.1",

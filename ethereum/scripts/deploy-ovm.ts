@@ -1,10 +1,25 @@
-import { ethers } from "hardhat"
+import { ethers, network } from "hardhat"
 import { saveFrontendFiles } from "./helpers"
 import initialCreators from "../initial-creators.json"
 
+async function extendHre() {
+  // HACK: override ethers provider until it's fixed in @eth-optimism/hardhat-ovm
+  // @ts-ignore
+  const provider = new ethers.providers.JsonRpcProvider(network.config.url)
+  provider.pollingInterval = ethers.provider.pollingInterval
+  provider.getGasPrice = ethers.provider.getGasPrice
+  ethers.provider = provider
+
+  let signers = await ethers.getSigners()
+  signers = signers.map((signer) => signer.connect(provider))
+
+  ethers.getSigners = async () => signers
+}
 async function main() {
   const initialSupply = 10_000_000
-  const [deployer] = await ethers.getSigners()
+
+  await extendHre()
+  let [deployer] = await ethers.getSigners()
 
   console.log("Deploying contracts with the account: ", deployer.address)
   console.log("Account balance: ", (await deployer.getBalance()).toString())
@@ -39,15 +54,12 @@ async function main() {
   // deploy initial creator tokens
   console.log("deploying initial creator tokens...")
   for (let creator of initialCreators.creators.reverse()) {
-    const tx = await tada.connect(deployer).makeCreatorToken(
-      creator.name, 
-      creator.token,
-      {
-        gasLimit: 8999999,
-        gasPrice: ethers.BigNumber.from("0"),
-      }
-    )
+    const tx = await tada.connect(deployer).makeCreatorToken(creator.name, creator.token, {
+      gasLimit: 8999999,
+      gasPrice: ethers.BigNumber.from("0"),
+    })
     await tx.wait()
+    console.log(`deployed ${creator.name}`)
   }
   console.log("deployed initial creator tokens...DONE")
 

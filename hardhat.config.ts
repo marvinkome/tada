@@ -18,11 +18,12 @@ const config: HardhatUserConfig = {
   ovm: {
     solcVersion: "0.7.6",
   },
+
   networks: {
-    "optimism-prod": {
+    kovanOE: {
       url: "https://kovan.optimism.io",
       accounts: {
-        mnemonic: 'test test test test test test test test test test test junk',
+        mnemonic: process.env.mnemonic,
       },
       gasPrice: 0,
       ovm: true,
@@ -30,7 +31,7 @@ const config: HardhatUserConfig = {
     optimism: {
       url: "http://127.0.0.1:8545",
       accounts: {
-        mnemonic: 'test test test test test test test test test test test junk',
+        mnemonic: process.env.mnemonic,
       },
       gasPrice: 0,
       ovm: true,
