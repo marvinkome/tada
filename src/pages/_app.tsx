@@ -1,12 +1,12 @@
 import Head from "next/head"
-import App from "next/app"
-import type { AppContext } from "next/app"
 import { ChakraProvider } from "@chakra-ui/react"
 import { getAddressFromCookie, WalletProvider } from "burner-wallet"
 import { provider, tokenContracts } from "ethereum"
 import { theme } from "theme"
 
-function MyApp({ Component, pageProps, initialAddress }) {
+function MyApp({ Component, pageProps }) {
+  const address = getAddressFromCookie(false)
+
   return (
     <ChakraProvider theme={theme}>
       <Head>
@@ -20,23 +20,11 @@ function MyApp({ Component, pageProps, initialAddress }) {
         <title>TaDa! - Buy and sell influencer stocks</title>
       </Head>
 
-      <WalletProvider provider={provider} contracts={tokenContracts} address={initialAddress}>
+      <WalletProvider provider={provider} contracts={tokenContracts} address={address}>
         <Component {...pageProps} />
       </WalletProvider>
     </ChakraProvider>
   )
-}
-
-MyApp.getInitialProps = async (appContext: AppContext) => {
-  const { req, res } = appContext.ctx
-  const serverSide = !!req && !!res
-
-  // get current address of the user
-  const address = getAddressFromCookie(appContext.ctx, serverSide)
-
-  console.log("Initial Address: " + address)
-  const appProps = await App.getInitialProps(appContext)
-  return { ...appProps, initialAddress: address }
 }
 
 export default MyApp

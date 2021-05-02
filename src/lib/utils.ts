@@ -11,7 +11,7 @@ export function truncateDecimal(str: string, maxDecimalDigits: number) {
   let res = (+str).toFixed(maxDecimalDigits)
 
   // @ts-ignore
-  if (isNaN(res)) {
+  if (isNaN(res) || +res <= 0) {
     res = "0"
   }
 

@@ -25,7 +25,7 @@ export function toBase64(o: ICookie | ILocalStorage): string {
   return base64
 }
 
-export function getAddressFromCookie(context: NextPageContext, serverSide: boolean) {
+export function getAddressFromCookie(serverSide: boolean, context?: NextPageContext) {
   const cookie = serverSide ? nextCookies(context)[STORAGE_NAME] : Cookies.get(STORAGE_NAME)
   const { address } = fromBase64(cookie) as ICookie
 
