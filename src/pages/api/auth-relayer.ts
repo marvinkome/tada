@@ -16,6 +16,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     const deployer = ethers.Wallet.fromMnemonic(process.env.mnemonic).connect(provider)
 
+    if (await tadaContract.connect(deployer).hasFaucetUserId(googleId)) {
+      return res.status(400).json({ message: "Account already funded" })
+    }
+
     // call the faucet and send user shill tokens
     const tx = await tadaContract
       .connect(deployer)
